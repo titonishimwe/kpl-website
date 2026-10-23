@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Careers{% endblock %}
+{% block description %}Explore career opportunities at Kigali Public Library and join a team dedicated to learning, culture, innovation, and community development.{% endblock %}
+
+{% block content %}
+<!-- HERO -->
+<section class="py-5 py-lg-6 border-bottom bg-white text-center">
+  <div class="container-xxl py-4">
+    <h1 class="display-4 fw-bold tracking-tight mb-3">Careers</h1>
+    <div class="section-accent-line"></div>
+    <p class="lead text-muted max-w-3xl mx-auto fs-4 leading-relaxed">
+      Join a team committed to expanding access to knowledge, learning, culture, and community engagement across Rwanda.
+    </p>
+  </div>
+</section>
+
+<!-- WHY WORK WITH US -->
+<section class="py-5 py-lg-6 bg-white">
+  <div class="container-xxl">
+    <div class="text-center mb-5">
+      <h2 class="display-6 fw-bold tracking-tight">Why Work With Us</h2>
+      <div class="section-accent-line"></div>
+    </div>
+    <div class="row g-4 g-lg-5">
+      {% for item in principles %}
+        <div class="col-12 col-md-4">
+          <div class="p-4 border rounded-3 h-100">
+            <div class="section-accent-line start mb-3"></div>
+            <h3 class="fs-4 fw-bold mb-3">{{ item.title }}</h3>
+            <p class="text-muted leading-relaxed mb-0">{{ item.description }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- CURRENT VACANCIES -->
+<section class="py-5 py-lg-6 text-white text-center" style="background-color: var(--kpl-primary);">
+  <div class="container-xxl py-4">
+    <p class="text-uppercase tracking-widest text-secondary fw-semibold small mb-2">Opportunities</p>
+    <h2 class="display-6 fw-bold tracking-tight mb-4">Current Vacancies</h2>
+    <div class="section-accent-line"></div>
+    <p class="fs-5 text-white-50 max-w-2xl mx-auto leading-relaxed mb-0">
+      There are currently no open positions at Kigali Public Library. We encourage interested candidates to check back regularly for future opportunities.
+    </p>
+  </div>
+</section>
+
+<!-- WHAT WE LOOK FOR -->
+<section class="py-5 py-lg-6 bg-white">
+  <div class="container-xxl">
+    <div class="row g-4 align-items-center">
+      <div class="col-12 col-md-4">
+        <p class="text-uppercase tracking-widest text-accent fw-bold small mb-2">Our Values</p>
+        <h2 class="display-6 fw-bold tracking-tight">What We Look For</h2>
+        <div class="section-accent-line start"></div>
+      </div>
+      <div class="col-12 col-md-8">
+        <div class="d-flex flex-wrap gap-2">
+          {% for q in qualities %}
+            <span class="badge bg-light text-dark border p-3 fs-6 fw-semibold text-uppercase tracking-wide">{{ q }}</span>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STAY CONNECTED & CTA -->
+<section class="py-5 py-lg-6 bg-light border-top border-bottom text-center">
+  <div class="container-xxl py-4">
+    <h2 class="display-6 fw-bold tracking-tight mb-3">Interested in Working With Us?</h2>
+    <div class="section-accent-line"></div>
+    <p class="fs-5 text-muted max-w-2xl mx-auto leading-relaxed mb-4">
+      Even when there are no current vacancies, we welcome expressions of interest from individuals who are passionate about libraries, education, learning, culture, and community development.
+    </p>
+    <a href="mailto:recruitment@kplonline.org" class="btn btn-kpl-primary px-5 py-3">
+      <i class="bi bi-envelope me-2"></i>recruitment@kplonline.org
+    </a>
+  </div>
+</section>
+{% endblock %}

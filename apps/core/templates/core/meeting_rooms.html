@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Meeting Rooms{% endblock %}
+{% block description %}Explore professional meeting rooms available at Kigali Public Library.{% endblock %}
+
+{% block content %}
+<section class="py-5 border-bottom bg-white text-center">
+  <div class="container-xxl py-4">
+    <h1 class="display-4 fw-bold tracking-tight mb-3">Meeting Rooms</h1>
+    <div class="section-accent-line"></div>
+    <p class="lead text-muted max-w-3xl mx-auto fs-4 leading-relaxed">
+      Professional meeting spaces designed for collaboration, planning, presentations, and productive discussions.
+    </p>
+  </div>
+</section>
+
+<section class="py-5 py-lg-6 bg-white">
+  <div class="container-xxl">
+    <div class="row g-4 g-lg-5">
+      {% for room in rooms %}
+        <div class="col-12 col-md-4">
+          <div class="card h-100 border rounded-4 overflow-hidden shadow-sm hover-shadow transition">
+            <div class="bg-light p-4 text-center border-bottom d-flex align-items-center justify-content-center" style="min-height: 160px;">
+              <span class="fs-1 text-secondary"><i class="bi bi-people-fill"></i></span>
+            </div>
+            <div class="card-body p-4">
+              <h3 class="fs-4 fw-bold mb-1">{{ room.title }}</h3>
+              <p class="badge bg-secondary text-dark text-uppercase tracking-wider mb-3">{{ room.capacity }}</p>
+              <div class="section-accent-line start mb-3"></div>
+              <p class="text-muted leading-relaxed mb-0">{{ room.description }}</p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="text-center mt-5 pt-3">
+      <a href="{% url 'core:reserve_room' %}" class="btn btn-kpl-primary px-5 py-3">
+        Reserve a Meeting Room <i class="bi bi-calendar-check ms-2"></i>
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

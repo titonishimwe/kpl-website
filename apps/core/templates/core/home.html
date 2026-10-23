@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Welcome to Kigali Public Library{% endblock %}
+{% block description %}Kigali Public Library is an open and public platform that inspires communities to read, learn and discover.{% endblock %}
+
+{% block content %}
+<!-- ================= HERO SECTION ================= -->
+<section class="hero-section" style="background-image: url('{% static 'images/bg/kplfront.jpg' %}');">
+  <div class="hero-overlay"></div>
+  <div class="hero-search-bar-wrapper">
+    <div class="d-flex flex-column flex-md-row align-items-center gap-2">
+      <!-- Catalog Direct Link -->
+      <a href="https://library.kplonline.org/" target="_blank" rel="noopener noreferrer" class="btn btn-catalog w-100 w-md-auto text-nowrap">
+        <i class="bi bi-journal-bookmark me-2"></i>Catalog
+      </a>
+
+      <!-- Koha OPAC Live Search -->
+      <form id="catalogSearchForm" class="d-flex flex-grow-1 w-100" role="search">
+        <input 
+          id="catalogSearchInput" 
+          type="text" 
+          class="form-control hero-search-input" 
+          placeholder="Search the library catalog..." 
+          aria-label="Search the catalog"
+          required
+        >
+        <button type="submit" class="btn btn-search-submit d-flex align-items-center gap-2" aria-label="Search">
+          <i class="bi bi-search"></i>
+          <span class="d-none d-sm-inline">Search</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ================= QUICK ACTIONS ================= -->
+<section class="border-bottom py-4 py-md-5 bg-white">
+  <div class="container-xxl">
+    <div class="row g-4 justify-content-center text-center">
+      {% for item in quick_links %}
+        <div class="col-6 col-md-3">
+          <a href="{{ item.href }}" {% if item.external %}target="_blank" rel="noopener noreferrer"{% endif %} class="quick-action-card h-100">
+            <img src="{% static item.icon %}" alt="{{ item.title }}" class="quick-action-icon">
+            <h3 class="quick-action-title">{{ item.title }}</h3>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ================= LIBRARY EVENTS & HAPPENINGS ================= -->
+<section class="py-5 py-lg-6 bg-light">
+  <div class="container-xxl">
+    <div class="row g-4 g-lg-5 align-items-start">
+      
+      <!-- Left: Featured Carousel -->
+      <div class="col-12 col-lg-7">
+        <h2 class="fs-2 fw-bold mb-4 tracking-tight">What’s Happening at the Library</h2>
+        <div id="eventsCarousel" class="carousel slide shadow rounded-3 overflow-hidden bg-white" data-bs-ride="carousel">
+          <div class="carousel-indicators">
+            {% for slide in carousel_slides %}
+              <button type="button" data-bs-target="#eventsCarousel" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" aria-label="Slide {{ forloop.counter }}"></button>
+            {% endfor %}
+          </div>
+          <div class="carousel-inner">
+            {% for slide in carousel_slides %}
+              <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <img src="{% static slide.image %}" class="d-block w-100" alt="{{ slide.alt }}" style="height: 380px; object-fit: cover;">
+                <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-75 rounded px-3 py-2">
+                  <h5 class="fw-bold mb-1">{{ slide.title }}</h5>
+                  <p class="small mb-0">Join us in celebrating community reading and learning.</p>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#eventsCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon p-3 bg-dark bg-opacity-50 rounded-circle" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#eventsCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon p-3 bg-dark bg-opacity-50 rounded-circle" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right: Upcoming Events List -->
+      <div class="col-12 col-lg-5">
+        <h2 class="fs-2 fw-bold mb-4 tracking-tight">Upcoming Events</h2>
+        <div class="bg-white p-4 rounded-3 shadow-sm mb-4">
+          {% for event in events %}
+            <div class="event-item-card">
+              <a href="{{ event.link|default:'#' }}" class="event-item-title">{{ event.title }}</a>
+              <div class="mt-2 text-muted small">
+                <p class="mb-1">
+                  <span class="event-meta-label">Date</span>
+                  <span class="text-dark fw-medium">{{ event.date_text }}</span>
+                </p>
+                <p class="mb-0">
+                  <span class="event-meta-label">Location</span>
+                  <span>{{ event.location }}</span>
+                </p>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        <div>
+          <a href="{% url 'core:events' %}" class="btn btn-kpl-primary">
+            View All Events <i class="bi bi-arrow-right ms-2"></i>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= NEW ARRIVALS SECTION ================= -->
+<section class="py-5 bg-white">
+  <div class="container-xxl">
+    
+    <!-- Arrivals Header with Categories -->
+    <div class="p-4 p-md-5 rounded-4 mb-5 text-white" style="background-color: var(--kpl-primary);">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <h2 class="display-6 fw-bold text-uppercase mb-0">New Arrivals</h2>
+        
+        <!-- Category Nav Pills -->
+        <ul class="nav nav-pills nav-pills-kpl" id="arrivalsTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="adult-tab" data-bs-toggle="pill" data-bs-target="#adult-pane" type="button" role="tab">Adult</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="teens-tab" data-bs-toggle="pill" data-bs-target="#teens-pane" type="button" role="tab">Teens</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="kids-tab" data-bs-toggle="pill" data-bs-target="#kids-pane" type="button" role="tab">Kids</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Tab Contents -->
+    <div class="tab-content" id="arrivalsTabContent">
+      <!-- Adult Tab -->
+      <div class="tab-pane fade show active" id="adult-pane" role="tabpanel" tabindex="0">
+        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4 justify-content-center">
+          {% for book in adult_books %}
+            <div class="col">
+              <div class="book-card">
+                <img src="{% if book.cover %}{% static book.cover %}{% elif book.cover_image %}{{ book.cover_image.url }}{% else %}{% static 'images/covers/athousand.jpg' %}{% endif %}" alt="{{ book.title }}" class="book-cover-img img-fluid">
+                <h4 class="book-title">{{ book.title }}</h4>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Teens Tab -->
+      <div class="tab-pane fade" id="teens-pane" role="tabpanel" tabindex="0">
+        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4 justify-content-center">
+          {% for book in teen_books %}
+            <div class="col">
+              <div class="book-card">
+                <img src="{% if book.cover %}{% static book.cover %}{% elif book.cover_image %}{{ book.cover_image.url }}{% else %}{% static 'images/covers/wimpykid.jpg' %}{% endif %}" alt="{{ book.title }}" class="book-cover-img img-fluid">
+                <h4 class="book-title">{{ book.title }}</h4>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Kids Tab -->
+      <div class="tab-pane fade" id="kids-pane" role="tabpanel" tabindex="0">
+        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4 justify-content-center">
+          {% for book in kid_books %}
+            <div class="col">
+              <div class="book-card">
+                <img src="{% if book.cover %}{% static book.cover %}{% elif book.cover_image %}{{ book.cover_image.url }}{% else %}{% static 'images/covers/sulwe.jpeg' %}{% endif %}" alt="{{ book.title }}" class="book-cover-img img-fluid">
+                <h4 class="book-title">{{ book.title }}</h4>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}About Us{% endblock %}
+{% block description %}Learn about Kigali Public Library, our mission, vision, values, and commitment to providing access to knowledge across Rwanda.{% endblock %}
+
+{% block content %}
+<!-- ================= HERO ================= -->
+<section class="py-5 py-lg-6 border-bottom bg-white">
+  <div class="container-xxl py-4 text-center">
+    <h1 class="display-4 fw-bold tracking-tight mb-3">Kigali Public Library</h1>
+    <div class="section-accent-line"></div>
+    <p class="lead text-muted max-w-3xl mx-auto fs-4 leading-relaxed mb-4">
+      A national hub for learning, culture, and innovation committed to ensuring fair access to knowledge, creativity, and opportunity for all communities.
+    </p>
+    <p class="text-secondary fw-semibold text-uppercase tracking-wider small">
+      Kacyiru &middot; Kigali &middot; Rwanda
+    </p>
+  </div>
+</section>
+
+<!-- ================= WHO WE ARE ================= -->
+<section class="py-5 py-lg-6 bg-white">
+  <div class="container-xxl">
+    <div class="row g-4 g-lg-5 align-items-center">
+      <div class="col-12 col-md-4">
+        <h2 class="display-6 fw-bold tracking-tight">Who We Are</h2>
+        <div class="section-accent-line start"></div>
+      </div>
+      <div class="col-12 col-md-8">
+        <p class="fs-5 text-muted leading-relaxed mb-4">
+          Kigali Public Library (KPL) is a public-serving institution that oversees and supports more than 100 libraries across Rwanda, expanding access to books, digital resources, and learning opportunities beyond the city of Kigali.
+        </p>
+        <p class="fs-5 text-muted leading-relaxed mb-0">
+          As a custodian of knowledge and culture, KPL convenes readers, students, professionals, creatives, and families within an inclusive environment designed for discovery, dialogue, and personal growth.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= VISION & MISSION ================= -->
+<section class="py-5 py-lg-6 bg-light border-top border-bottom">
+  <div class="container-xxl">
+    <div class="text-center mb-5">
+      <h2 class="display-6 fw-bold tracking-tight">Vision &amp; Mission</h2>
+      <div class="section-accent-line"></div>
+    </div>
+    <div class="row g-4 g-lg-5">
+      <div class="col-12 col-md-6">
+        <div class="card h-100 p-4 p-lg-5 border-0 shadow-sm rounded-4">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <span class="p-3 bg-secondary bg-opacity-25 text-primary rounded-circle fs-3"><i class="bi bi-eye"></i></span>
+            <h3 class="fs-3 fw-bold mb-0 text-uppercase tracking-wide" style="color: var(--kpl-accent);">Vision</h3>
+          </div>
+          <p class="fs-5 text-muted leading-relaxed mb-0">
+            To create a world where all communities have access to information and learning opportunities that meet their creativity, curiosity, and intellectual aspirations.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-6">
+        <div class="card h-100 p-4 p-lg-5 border-0 shadow-sm rounded-4">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <span class="p-3 bg-secondary bg-opacity-25 text-primary rounded-circle fs-3"><i class="bi bi-compass"></i></span>
+            <h3 class="fs-3 fw-bold mb-0 text-uppercase tracking-wide" style="color: var(--kpl-accent);">Mission</h3>
+          </div>
+          <p class="fs-5 text-muted leading-relaxed mb-0">
+            To provide a dynamic and inclusive national platform that fosters lifelong learning, cultural enrichment, and community transformation.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CORE VALUES ================= -->
+<section class="py-5 py-lg-6 bg-white">
+  <div class="container-xxl">
+    <div class="text-center mb-5">
+      <h2 class="display-6 fw-bold tracking-tight">Core Values</h2>
+      <div class="section-accent-line"></div>
+    </div>
+    <div class="row g-4">
+      {% for val in values %}
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="p-4 border rounded-3 h-100 hover-shadow transition">
+            <div class="section-accent-line start mb-3"></div>
+            <h4 class="fs-4 fw-bold mb-2">{{ val.title }}</h4>
+            <p class="text-muted leading-relaxed mb-0">{{ val.text }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

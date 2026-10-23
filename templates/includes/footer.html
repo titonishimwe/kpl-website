@@ -1,0 +1,93 @@
+{% load static %}
+<footer class="kpl-footer mt-auto">
+  <!-- Segment Bar at top of footer -->
+  <div class="segment-bar">
+    <div class="segment-slice segment-slice-1"></div>
+    <div class="segment-slice segment-slice-2"></div>
+    <div class="segment-slice segment-slice-3"></div>
+    <div class="segment-slice segment-slice-4"></div>
+  </div>
+
+  <div class="container-xxl py-5">
+    <div class="row g-4 g-lg-5">
+      
+      <!-- Contact Column -->
+      <div class="col-12 col-md-6 col-lg-3">
+        <h6 class="footer-heading">Contact</h6>
+        <p class="fs-5 fw-semibold mb-2">Kigali Public Library</p>
+        <p class="text-muted mb-2">
+          KN 8 Avenue, Gasabo<br>
+          Kigali, Rwanda
+        </p>
+        <p class="mb-3">
+          <a href="https://maps.app.goo.gl/ZjdB5MHwKms4dHMC9" target="_blank" rel="noopener noreferrer" class="text-decoration-none text-success fw-medium">
+            View on Map <i class="bi bi-arrow-right"></i>
+          </a>
+        </p>
+        <p class="mb-1 text-muted">
+          <span class="text-uppercase fw-bold text-secondary me-2">T</span>
+          <a href="tel:+250788500777" class="text-decoration-none text-dark">+250 788 500 777</a>
+        </p>
+        <p class="mb-0 text-muted">
+          <span class="text-uppercase fw-bold text-secondary me-2">E</span>
+          <a href="mailto:info@kplonline.org" class="text-decoration-none text-dark">info@kplonline.org</a>
+        </p>
+      </div>
+
+      <!-- Library Hours Column -->
+      <div class="col-12 col-md-6 col-lg-3">
+        <h6 class="footer-heading">Library Hours</h6>
+        <div class="mb-3">
+          <p class="text-muted mb-1 fw-medium">Monday – Friday</p>
+          <p class="fs-6 fw-bold mb-0">8:00 AM – 8:00 PM</p>
+        </div>
+        <div>
+          <p class="text-muted mb-1 fw-medium">Saturday – Sunday</p>
+          <p class="fs-6 fw-bold mb-0">8:00 AM – 5:00 PM</p>
+        </div>
+      </div>
+
+      <!-- Resources Column -->
+      <div class="col-12 col-md-6 col-lg-3">
+        <h6 class="footer-heading">Resources</h6>
+        <ul class="list-unstyled mb-0">
+          <li><a href="https://kplonline.overdrive.com/" target="_blank" class="footer-link">Digital Library</a></li>
+          <li><a href="https://library.kplonline.org/" target="_blank" class="footer-link">Online Catalog</a></li>
+          <li><a href="https://read.nabu.org/" target="_blank" class="footer-link">NABU</a></li>
+          <li><a href="https://www.ekitabu.com/" target="_blank" class="footer-link">Ekitabu</a></li>
+          <li><a href="{% url 'core:privacy' %}" class="footer-link">Privacy Policy</a></li>
+        </ul>
+      </div>
+
+      <!-- Connect Column -->
+      <div class="col-12 col-md-6 col-lg-3">
+        <h6 class="footer-heading">Connect</h6>
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <a href="https://twitter.com/kigalilibrary" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="X / Twitter">
+            <i class="bi bi-twitter-x"></i>
+          </a>
+          <a href="https://instagram.com/kigalipubliclibrary" target="_blank" rel="noopener noreferrer" class="social-icon-btn text-danger" aria-label="Instagram">
+            <i class="bi bi-instagram"></i>
+          </a>
+          <a href="https://facebook.com/kigalipubliclibrary" target="_blank" rel="noopener noreferrer" class="social-icon-btn text-primary" aria-label="Facebook">
+            <i class="bi bi-facebook"></i>
+          </a>
+          <a href="https://youtube.com/@kigalipubliclibrary" target="_blank" rel="noopener noreferrer" class="social-icon-btn text-danger" aria-label="YouTube">
+            <i class="bi bi-youtube"></i>
+          </a>
+        </div>
+        <p class="text-muted small leading-relaxed">
+          Follow Kigali Public Library for updates on programs, initiatives, and library services.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Bottom Copyright -->
+    <div class="border-top mt-5 pt-4">
+      <p class="text-muted small mb-0">
+        &copy; {{ library_status.current_year|default:2026 }} Kigali Public Library. All rights reserved.
+      </p>
+    </div>
+  </div>
+</footer>

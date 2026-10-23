@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Get a Library Card - Membership{% endblock %}
+{% block description %}Apply for a Kigali Public Library membership and enjoy access to books, digital resources, internet services, and learning opportunities.{% endblock %}
+
+{% block content %}
+<!-- HERO -->
+<section class="py-5 border-bottom bg-white text-center">
+  <div class="container-xxl py-4">
+    <h1 class="display-4 fw-bold tracking-tight mb-3">Get a Library Card</h1>
+    <div class="section-accent-line"></div>
+    <p class="lead text-muted max-w-3xl mx-auto fs-4 leading-relaxed mb-4">
+      Become a member of Kigali Public Library and enjoy access to books, digital resources, internet services, and learning opportunities.
+    </p>
+    <a href="#applicationSection" class="btn btn-kpl-primary px-5 py-3">
+      Apply for Membership <i class="bi bi-arrow-down ms-2"></i>
+    </a>
+  </div>
+</section>
+
+<!-- MEMBERSHIP CATEGORIES -->
+<section class="py-5 py-lg-6 bg-white">
+  <div class="container-xxl">
+    <div class="row g-4 g-lg-5 align-items-start">
+      <div class="col-12 col-lg-4">
+        <p class="text-uppercase tracking-widest text-accent fw-bold small mb-2">Membership</p>
+        <h2 class="display-6 fw-bold tracking-tight mb-3">Membership Categories</h2>
+        <div class="section-accent-line start mb-4"></div>
+        <p class="text-muted leading-relaxed">
+          Choose the membership plan tailored to your study, reading, research, and internet access requirements.
+        </p>
+      </div>
+      <div class="col-12 col-lg-8">
+        <div class="table-responsive shadow-sm rounded-4 border">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th class="py-3 px-4">Category</th>
+                <th class="py-3">Monthly</th>
+                <th class="py-3 px-4">Annual</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for opt in membership_options %}
+                <tr>
+                  <td class="py-4 px-4 fw-semibold">{{ opt.label }}</td>
+                  <td class="py-4 text-muted">{{ opt.monthly }}</td>
+                  <td class="py-4 px-4 fw-bold text-dark">{{ opt.annual }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="py-5 py-lg-6 text-white text-center" style="background-color: var(--kpl-primary);">
+  <div class="container-xxl py-4">
+    <p class="text-uppercase tracking-widest text-secondary fw-semibold small mb-2">Benefits</p>
+    <h2 class="display-6 fw-bold tracking-tight mb-5">Membership Benefits</h2>
+    <div class="row g-4">
+      {% for benefit in benefits %}
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="p-4 rounded-4 border border-secondary border-opacity-25 h-100 text-center bg-dark bg-opacity-25">
+            <i class="bi {{ benefit.icon }} display-5 text-secondary mb-3 d-inline-block"></i>
+            <h3 class="fs-4 fw-bold mb-3">{{ benefit.title }}</h3>
+            <p class="text-white-50 leading-relaxed mb-0">{{ benefit.description }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- MEMBERSHIP RULES -->
+<section class="py-5 bg-white">
+  <div class="container-xxl">
+    <div class="row g-4 align-items-center">
+      <div class="col-12 col-md-4">
+        <p class="text-uppercase tracking-widest text-accent fw-bold small mb-2">Borrowing</p>
+        <h2 class="display-6 fw-bold tracking-tight">Membership Rules</h2>
+        <div class="section-accent-line start"></div>
+      </div>
+      <div class="col-12 col-md-8">
+        <ul class="list-unstyled text-muted fs-5 leading-relaxed space-y-3 mb-0">
+          <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> Annual members may borrow up to <strong>3 books</strong> at a time.</li>
+          <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> Monthly members may borrow up to <strong>2 books</strong> at a time.</li>
+          <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> Books are due within <strong>21 days</strong> and may be renewed once for an additional 7 days.</li>
+          <li class="mb-0"><i class="bi bi-info-circle-fill text-secondary me-2"></i> Late returns incur a fee of <strong>300 RWF</strong> per book, per day.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ONLINE APPLICATION FORM ================= -->
+<section id="applicationSection" class="py-5 py-lg-6 bg-light border-top">
+  <div class="container-xxl">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-10">
+        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+          <div class="text-center mb-5">
+            <h2 class="display-6 fw-bold tracking-tight mb-2">Membership Application</h2>
+            <div class="section-accent-line"></div>
+            <p class="text-muted fs-5">Complete the application below to register for a Kigali Public Library Card.</p>
+          </div>
+
+          <form method="post" enctype="multipart/form-data" action="{% url 'core:membership' %}">
+            {% csrf_token %}
+            {{ form.website }}
+
+            <!-- PERSONAL INFORMATION -->
+            <h4 class="fs-4 fw-bold mb-4 pb-2 border-bottom">1. Personal Information</h4>
+            <div class="row g-3 mb-5">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">First Name *</label>
+                {{ form.first_name }}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Last Name *</label>
+                {{ form.last_name }}
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Date of Birth *</label>
+                {{ form.dob }}
+                <small class="text-muted">If under 18, guardian details will be requested below.</small>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Gender *</label>
+                {{ form.gender }}
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">National ID / Passport *</label>
+                {{ form.id_passport }}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Phone Number *</label>
+                {{ form.phone }}
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Email Address *</label>
+                {{ form.email }}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Alternative Phone Number</label>
+                {{ form.alt_phone }}
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Alternative Email</label>
+                {{ form.alt_email }}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Province</label>
+                {{ form.province }}
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">District</label>
+                {{ form.district }}
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Sector</label>
+                {{ form.sector }}
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Village</label>
+                {{ form.village }}
+              </div>
+            </div>
+
+            <!-- PARENT / GUARDIAN (TOGGLED DYNAMICALLY FOR MINORS) -->
+            <div id="guardianSection" style="display: none;">
+              <h4 class="fs-4 fw-bold mb-4 pb-2 border-bottom text-primary">
+                <i class="bi bi-person-heart me-2"></i>2. Parent / Guardian Information (for Minors under 18)
+              </h4>
+              <div class="row g-3 mb-5">
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">Parent / Guardian Name *</label>
+                  {{ form.guardian_name }}
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">Relationship *</label>
+                  {{ form.guardian_relationship }}
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">Parent / Guardian ID *</label>
+                  {{ form.guardian_id }}
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">Parent / Guardian Phone *</label>
+                  {{ form.guardian_phone }}
+                </div>
+              </div>
+            </div>
+
+            <!-- MEMBERSHIP SELECTION -->
+            <h4 class="fs-4 fw-bold mb-4 pb-2 border-bottom">3. Membership Plan Selection</h4>
+            <div class="row g-3 mb-5">
+              <div class="col-12">
+                <label class="form-label fw-semibold">Select Membership Category *</label>
+                {{ form.membership_type }}
+              </div>
+            </div>
+
+            <!-- PAYMENT METHOD -->
+            <h4 class="fs-4 fw-bold mb-4 pb-2 border-bottom">4. Payment Method</h4>
+            <div class="row g-3 mb-4">
+              <div class="col-12">
+                <div class="p-3 border rounded-3 bg-light">
+                  <label class="form-label fw-semibold mb-3">Preferred Payment:</label>
+                  <div class="d-flex flex-column flex-sm-row gap-4">
+                    {% for radio in form.payment_method %}
+                      <div class="form-check">
+                        {{ radio.tag }}
+                        <label class="form-check-label fw-medium" for="{{ radio.id_for_label }}">
+                          {{ radio.choice_label }}
+                        </label>
+                      </div>
+                    {% endfor %}
+                  </div>
+                  <div class="mt-3 p-3 bg-white rounded border-start border-4 border-success">
+                    <p class="fw-bold mb-1"><i class="bi bi-phone me-1"></i> MoMo Pay Code:</p>
+                    <code class="fs-5 fw-bold text-success">*182*8*1*021216#</code>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SUPPORTING DOCUMENT -->
+            <h4 class="fs-4 fw-bold mb-4 pb-2 border-bottom">5. Supporting Document</h4>
+            <div class="row g-3 mb-5">
+              <div class="col-12">
+                <label class="form-label fw-semibold">Upload National ID, Passport, or Student ID (PDF, JPG, PNG)</label>
+                {{ form.document }}
+              </div>
+            </div>
+
+            <!-- TERMS CONFIRMATION -->
+            <div class="mb-5">
+              <div class="form-check">
+                {{ form.terms_confirmed }}
+                <label class="form-check-label text-muted" for="{{ form.terms_confirmed.id_for_label }}">
+                  I confirm that the information provided is accurate and I agree to abide by Kigali Public Library membership policies and borrowing regulations.
+                </label>
+              </div>
+            </div>
+
+            <!-- SUBMIT BUTTON -->
+            <div class="text-center">
+              <button type="submit" class="btn btn-kpl-primary px-5 py-3 fs-6">
+                Submit Membership Application <i class="bi bi-check-circle ms-2"></i>
+              </button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

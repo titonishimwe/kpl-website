@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Reserve a Room or Event Space{% endblock %}
+{% block description %}Book a meeting room, discussion room, or event space at Kigali Public Library.{% endblock %}
+
+{% block content %}
+<section class="py-5 border-bottom bg-white text-center">
+  <div class="container-xxl py-4">
+    <h1 class="display-4 fw-bold tracking-tight mb-3">Room &amp; Space Reservation</h1>
+    <div class="section-accent-line"></div>
+    <p class="lead text-muted max-w-3xl mx-auto fs-4 leading-relaxed">
+      Submit your booking request for discussion rooms, meeting halls, and event spaces at KPL.
+    </p>
+  </div>
+</section>
+
+<section class="py-5 bg-light">
+  <div class="container-xxl">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
+          <h2 class="fs-3 fw-bold mb-4">Reservation Request Form</h2>
+          <form method="post" action="{% url 'core:reserve_room' %}">
+            {% csrf_token %}
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Full Name *</label>
+                {{ form.name }}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Email Address *</label>
+                {{ form.email }}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Phone Number *</label>
+                {{ form.phone }}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Organization (optional)</label>
+                {{ form.organization }}
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Space Type *</label>
+                {{ form.space_type }}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Reservation Date *</label>
+                {{ form.reservation_date }}
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Duration *</label>
+                {{ form.duration }}
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Expected Attendees *</label>
+                {{ form.attendees_count }}
+              </div>
+
+              <div class="col-12">
+                <label class="form-label fw-semibold">Purpose of Reservation *</label>
+                {{ form.purpose }}
+              </div>
+
+              <div class="col-12 mt-4 text-center">
+                <button type="submit" class="btn btn-kpl-primary px-5 py-3">
+                  Submit Reservation Request <i class="bi bi-send ms-2"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

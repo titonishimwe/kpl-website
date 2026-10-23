@@ -1,0 +1,178 @@
+{% load static %}
+<header class="fixed-top kpl-header">
+  <div class="container-xxl py-2">
+    <div class="d-flex justify-content-between align-items-center">
+      
+      <!-- Brand Logo & Tagline -->
+      <a href="{% url 'core:home' %}" class="d-flex flex-column align-items-center text-decoration-none">
+        <img src="{% static 'images/logos/logo.png' %}" alt="Kigali Public Library" class="kpl-logo">
+        <span class="kpl-logo-tagline mt-1">READ – LEARN – DISCOVER</span>
+      </a>
+
+      <!-- Desktop Library Live Status -->
+      <div class="d-none d-md-flex flex-column align-items-end text-end">
+        <div class="library-status-badge {% if library_status.is_open %}status-open{% else %}status-closed{% endif %}">
+          <span class="status-dot {% if library_status.is_open %}open{% else %}closed{% endif %}"></span>
+          <span>{{ library_status.status }}</span>
+        </div>
+        <small class="text-muted">
+          <span class="fw-semibold">Today’s hours:</span> {{ library_status.hours }}
+        </small>
+      </div>
+
+      <!-- Auth & Actions -->
+      <div class="d-none d-lg-flex align-items-center gap-2">
+        {% if user.is_authenticated %}
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              <i class="bi bi-person-circle me-1"></i> {{ user.first_name|default:user.username }}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+              <li><a class="dropdown-item" href="{% url 'accounts:profile' %}"><i class="bi bi-person me-2"></i>My Profile</a></li>
+              {% if user.is_staff %}
+                <li><a class="dropdown-item" href="/admin/" target="_blank"><i class="bi bi-shield-lock me-2"></i>Django Admin</a></li>
+              {% endif %}
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+            </ul>
+          </div>
+        {% else %}
+          <a href="{% url 'accounts:login' %}" class="btn btn-sm btn-outline-dark px-3 rounded-pill">Log In</a>
+          <a href="{% url 'accounts:register' %}" class="btn btn-sm btn-kpl-secondary px-3 rounded-pill">Register</a>
+        {% endif %}
+      </div>
+
+      <!-- Mobile Hamburger Button -->
+      <button class="btn btn-link text-dark d-lg-none p-0 border-0 fs-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenuOffcanvas" aria-controls="mobileMenuOffcanvas" aria-label="Toggle Navigation">
+        <i class="bi bi-list"></i>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Desktop Navigation Menu -->
+  <nav class="navbar navbar-expand-lg border-top py-0 d-none d-lg-block bg-white">
+    <div class="container-xxl d-flex justify-content-end">
+      <ul class="navbar-nav gap-2">
+        <li class="nav-item">
+          <a class="nav-link nav-link-custom" href="{% url 'core:home' %}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-link-custom" href="{% url 'core:about' %}">About</a>
+        </li>
+
+        <!-- Services Mega Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link nav-link-custom dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Services
+          </a>
+          <div class="dropdown-menu dropdown-menu-mega">
+            <div class="row g-4">
+              <div class="col-4">
+                <div class="mega-menu-title">Reserve Spaces</div>
+                <a class="mega-menu-link" href="{% url 'core:spaces' %}">Meeting &amp; Event Spaces</a>
+                <a class="mega-menu-link" href="{% url 'core:meeting_rooms' %}">Meeting Rooms</a>
+                <a class="mega-menu-link" href="{% url 'core:discussion_rooms' %}">Discussion Rooms</a>
+                <a class="mega-menu-link text-primary fw-semibold" href="{% url 'core:reserve_room' %}">Online Reservation &rarr;</a>
+              </div>
+              <div class="col-4">
+                <div class="mega-menu-title">Library Resources</div>
+                <a class="mega-menu-link" href="{% url 'core:membership' %}">Get a Library Card</a>
+                <a class="mega-menu-link" href="https://kplonline.overdrive.com/" target="_blank">Digital Library</a>
+                <a class="mega-menu-link" href="https://library.kplonline.org/" target="_blank">Online Catalog (Koha)</a>
+              </div>
+              <div class="col-4">
+                <div class="mega-menu-title">Programs &amp; Events</div>
+                <a class="mega-menu-link" href="{% url 'core:events' %}">Upcoming Events</a>
+                <a class="mega-menu-link" href="https://wc.kplonline.org" target="_blank">Writing Competition</a>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link nav-link-custom" href="https://wc.kplonline.org" target="_blank" rel="noopener noreferrer">Writing Competition</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link nav-link-custom" href="{% url 'core:careers' %}">Careers</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Thin Segment Bar on Scroll -->
+  <div class="header-scroll-bar d-none">
+    <div class="segment-bar thin">
+      <div class="segment-slice segment-slice-1"></div>
+      <div class="segment-slice segment-slice-2"></div>
+      <div class="segment-slice segment-slice-3"></div>
+      <div class="segment-slice segment-slice-4"></div>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Offcanvas Drawer -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="mobileMenuOffcanvas" aria-labelledby="mobileMenuLabel">
+  <div class="offcanvas-header border-bottom">
+    <div class="d-flex align-items-center gap-2">
+      <img src="{% static 'images/logos/logo.png' %}" alt="KPL" style="height: 38px;">
+      <span class="fw-bold fs-6">KPL Menu</span>
+    </div>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column justify-content-between">
+    <div>
+      <!-- Mobile Library Status -->
+      <div class="p-3 bg-light rounded-3 mb-4">
+        <div class="library-status-badge {% if library_status.is_open %}status-open{% else %}status-closed{% endif %} mb-1">
+          <span class="status-dot {% if library_status.is_open %}open{% else %}closed{% endif %}"></span>
+          <span>{{ library_status.status }}</span>
+        </div>
+        <small class="text-muted d-block">
+          <strong>Today's Hours:</strong> {{ library_status.hours }}
+        </small>
+      </div>
+
+      <!-- Links -->
+      <ul class="nav flex-column gap-2 fs-5 fw-semibold">
+        <li class="nav-item"><a class="nav-link text-dark" href="{% url 'core:home' %}">Home</a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="{% url 'core:about' %}">About</a></li>
+        <li class="nav-item">
+          <a class="nav-link text-dark" data-bs-toggle="collapse" href="#mobileServicesCollapse" role="button">
+            Services <i class="bi bi-chevron-down fs-6 float-end"></i>
+          </a>
+          <div class="collapse ps-3" id="mobileServicesCollapse">
+            <ul class="nav flex-column gap-1 fs-6 fw-normal mt-2">
+              <li><a class="nav-link text-secondary" href="{% url 'core:spaces' %}">Meeting &amp; Event Spaces</a></li>
+              <li><a class="nav-link text-secondary" href="{% url 'core:meeting_rooms' %}">Meeting Rooms</a></li>
+              <li><a class="nav-link text-secondary" href="{% url 'core:discussion_rooms' %}">Discussion Rooms</a></li>
+              <li><a class="nav-link text-secondary" href="{% url 'core:membership' %}">Get a Library Card</a></li>
+              <li><a class="nav-link text-secondary" href="https://kplonline.overdrive.com/" target="_blank">Digital Library</a></li>
+              <li><a class="nav-link text-secondary" href="{% url 'core:events' %}">Upcoming Events</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="nav-item"><a class="nav-link text-dark" href="https://wc.kplonline.org" target="_blank">Writing Competition</a></li>
+        <li class="nav-item"><a class="nav-link text-dark" href="{% url 'core:careers' %}">Careers</a></li>
+      </ul>
+    </div>
+
+    <!-- Mobile Auth -->
+    <div class="border-top pt-3 mt-4">
+      {% if user.is_authenticated %}
+        <div class="d-grid gap-2">
+          <a href="{% url 'accounts:profile' %}" class="btn btn-outline-dark"><i class="bi bi-person me-2"></i>My Profile</a>
+          {% if user.is_staff %}
+            <a href="/admin/" target="_blank" class="btn btn-outline-secondary"><i class="bi bi-shield-lock me-2"></i>Django Admin</a>
+          {% endif %}
+          <a href="{% url 'accounts:logout' %}" class="btn btn-danger"><i class="bi bi-box-arrow-right me-2"></i>Logout</a>
+        </div>
+      {% else %}
+        <div class="d-grid gap-2">
+          <a href="{% url 'accounts:login' %}" class="btn btn-outline-dark">Log In</a>
+          <a href="{% url 'accounts:register' %}" class="btn btn-kpl-secondary">Register</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Meeting &amp; Event Spaces{% endblock %}
+{% block description %}Flexible spaces designed for meetings, discussions, workshops, and community events at Kigali Public Library.{% endblock %}
+
+{% block content %}
+<section class="py-5 border-bottom bg-white text-center">
+  <div class="container-xxl py-4">
+    <h1 class="display-4 fw-bold tracking-tight mb-3">Meeting &amp; Event Spaces</h1>
+    <div class="section-accent-line"></div>
+    <p class="lead text-muted max-w-3xl mx-auto fs-4 leading-relaxed">
+      Flexible spaces designed for meetings, discussions, workshops, training sessions, conferences, and community events.
+    </p>
+  </div>
+</section>
+
+<!-- SPACE CATEGORIES -->
+<section class="py-5 py-lg-6 bg-white">
+  <div class="container-xxl">
+    <div class="row g-4 g-lg-5">
+      {% for space in spaces %}
+        <div class="col-12 col-md-4">
+          <div class="card h-100 border shadow-sm rounded-4 overflow-hidden hover-shadow transition">
+            <div class="bg-light p-5 text-center border-bottom d-flex align-items-center justify-content-center" style="min-height: 180px;">
+              <span class="text-uppercase tracking-widest text-muted fw-bold fs-5">{{ space.title }}</span>
+            </div>
+            <div class="card-body p-4 d-flex flex-column justify-content-between">
+              <div>
+                <h3 class="fs-4 fw-bold mb-3">{{ space.title }}</h3>
+                <div class="section-accent-line start mb-3"></div>
+                <p class="text-muted leading-relaxed mb-4">{{ space.description }}</p>
+              </div>
+              <a href="{% url space.url %}" class="btn btn-outline-dark rounded-pill fw-semibold text-uppercase tracking-wider">
+                Explore Space <i class="bi bi-arrow-right ms-2"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- IMPORTANT INFORMATION -->
+<section class="py-5 bg-light border-top border-bottom">
+  <div class="container-xxl max-w-4xl">
+    <p class="text-uppercase tracking-widest text-secondary fw-bold small mb-2">Important Information</p>
+    <h3 class="fs-4 fw-bold mb-3">Reservation Guidelines</h3>
+    <ul class="text-muted leading-relaxed space-y-2 mb-0">
+      <li>Room reservations are subject to availability and library scheduling approval.</li>
+      <li>Audio-visual equipment (projectors, microphones) and high-speed Wi-Fi are available on request.</li>
+      <li>Special terms may apply depending on the type of space requested and nature of public or corporate activity.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-5 py-lg-6 bg-white text-center">
+  <div class="container-xxl py-4">
+    <h2 class="display-6 fw-bold tracking-tight mb-3">Reserve a Space</h2>
+    <div class="section-accent-line"></div>
+    <p class="fs-5 text-muted max-w-2xl mx-auto leading-relaxed mb-4">
+      Whether you need a meeting room, a discussion room, or an event venue, our spaces are ready to host your next engagement.
+    </p>
+    <a href="{% url 'core:reserve_room' %}" class="btn btn-kpl-primary px-5 py-3">
+      Book Online Now <i class="bi bi-calendar-check ms-2"></i>
+    </a>
+  </div>
+</section>
+{% endblock %}

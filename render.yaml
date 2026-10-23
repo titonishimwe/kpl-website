@@ -1,0 +1,54 @@
+# Render Blueprint: https://render.com/docs/blueprint-spec
+# In the Render Dashboard choose New > Blueprint and select this repository.
+# Region is Frankfurt, the closest Render region to Kigali.
+# Region and database name cannot be changed after the first apply.
+
+databases:
+  - name: kpl-db
+    plan: free
+    region: frankfurt
+    databaseName: kpl
+    user: kpl
+    ipAllowList: []
+
+services:
+  - type: web
+    name: kpl-website
+    runtime: python
+    plan: free
+    region: frankfurt
+    healthCheckPath: /
+    buildCommand: bash build.sh
+    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+    autoDeployTrigger: commit
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.14.8"
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: "2"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: kpl-db
+          property: connectionString
+      - key: DEFAULT_ADMIN_USERNAME
+        value: admin
+      - key: DEFAULT_ADMIN_EMAIL
+        value: admin@kplonline.org
+      # Render asks for this when the Blueprint is created. It is not stored in git.
+      - key: DEFAULT_ADMIN_PASSWORD
+        sync: false
+
+    # Uploaded membership documents and images live under media/.
+    # A free web service has an ephemeral disk, so those files disappear on
+    # restart or redeploy. To keep them, change plan to a paid id such as
+    # 0.5c-512mb and uncomment the disk below. Disks are not available on free.
+    # disk:
+    #   name: kpl-media
+    #   mountPath: /opt/render/project/src/media
+    #   sizeGB: 1

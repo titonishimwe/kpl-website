@@ -1,0 +1,515 @@
+/* =========================================================
+   Kigali Public Library (KPL) - Custom Stylesheet
+   Designed with Bootstrap 5 + Custom Modern Aesthetics
+   ========================================================= */
+
+@font-face {
+  font-family: 'DINPro';
+  src: url('../fonts/dinpro/dinpro.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DINPro';
+  src: url('../fonts/dinpro/dinpro_medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DINPro';
+  src: url('../fonts/dinpro/dinpro_bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --kpl-primary: #0B1412;
+  --kpl-secondary: #6DCDB8;
+  --kpl-accent: #37675C;
+  --kpl-gray: #E7E7E7;
+  --kpl-light-bg: #F6F8F7;
+  --kpl-purple: #BD31BB;
+  --kpl-open-green: #1f7a3e;
+  --kpl-closed-red: #8b1e1e;
+}
+
+body {
+  font-family: 'DINPro', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--kpl-primary);
+  background-color: #ffffff;
+  padding-top: 130px; /* Offset for fixed top navbar */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+/* ================= Segment Bar ================= */
+.segment-bar {
+  display: flex;
+  width: 100%;
+  height: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.segment-bar.thin {
+  height: 3px;
+}
+
+.segment-slice {
+  position: relative;
+  height: 100%;
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 100%, 0 100%);
+}
+
+.segment-slice-1 {
+  flex: 3;
+  background-color: var(--kpl-primary);
+  z-index: 4;
+}
+
+.segment-slice-2 {
+  flex: 4;
+  background-color: var(--kpl-secondary);
+  margin-left: -20px;
+  z-index: 3;
+}
+
+.segment-slice-3 {
+  flex: 2;
+  background-color: var(--kpl-purple);
+  margin-left: -20px;
+  z-index: 2;
+}
+
+.segment-slice-4 {
+  flex: 1;
+  background-color: var(--kpl-primary);
+  margin-left: -20px;
+  z-index: 1;
+  clip-path: none;
+}
+
+/* ================= Navigation ================= */
+.kpl-header {
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.kpl-header.scrolled {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.kpl-logo {
+  height: 52px;
+  width: auto;
+  transition: all 0.3s ease;
+}
+
+.kpl-logo-tagline {
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  color: #6c757d;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.library-status-badge {
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.status-open {
+  color: var(--kpl-open-green);
+}
+
+.status-closed {
+  color: var(--kpl-closed-red);
+}
+
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.status-dot.open {
+  background-color: var(--kpl-open-green);
+  box-shadow: 0 0 8px rgba(31, 122, 62, 0.6);
+}
+
+.status-dot.closed {
+  background-color: var(--kpl-closed-red);
+}
+
+.nav-link-custom {
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  color: var(--kpl-primary) !important;
+  padding: 0.6rem 1rem !important;
+  text-transform: uppercase;
+  transition: color 0.2s ease;
+}
+
+.nav-link-custom:hover,
+.nav-link-custom:focus {
+  color: var(--kpl-accent) !important;
+}
+
+.dropdown-menu-mega {
+  min-width: 550px;
+  border: 1px solid var(--kpl-gray);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.mega-menu-title {
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #888888;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.mega-menu-link {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--kpl-primary);
+  text-decoration: none;
+  padding: 0.35rem 0;
+  transition: all 0.2s ease;
+}
+
+.mega-menu-link:hover {
+  color: var(--kpl-accent);
+  transform: translateX(4px);
+}
+
+/* ================= Hero Section ================= */
+.hero-section {
+  position: relative;
+  min-height: 480px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(11, 20, 18, 0.35);
+}
+
+.hero-search-bar-wrapper {
+  position: relative;
+  z-index: 2;
+  width: 90%;
+  max-width: 860px;
+  background: rgba(109, 205, 184, 0.55);
+  backdrop-filter: blur(8px);
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.btn-catalog {
+  background-color: var(--kpl-accent);
+  color: #ffffff;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-catalog:hover {
+  background-color: var(--kpl-primary);
+  color: #ffffff;
+}
+
+.hero-search-input {
+  border: none;
+  border-radius: 6px 0 0 6px;
+  padding: 0.75rem 1.25rem;
+  font-size: 1.05rem;
+}
+
+.hero-search-input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.btn-search-submit {
+  background-color: var(--kpl-secondary);
+  color: var(--kpl-primary);
+  border: none;
+  border-radius: 0 6px 6px 0;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.btn-search-submit:hover {
+  background-color: #5bbfa9;
+  color: var(--kpl-primary);
+}
+
+/* ================= Quick Actions ================= */
+.quick-action-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: var(--kpl-primary);
+  padding: 1.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.25s ease;
+}
+
+.quick-action-card:hover {
+  transform: translateY(-4px);
+  color: var(--kpl-accent);
+}
+
+.quick-action-icon {
+  width: 58px;
+  height: 58px;
+  margin-bottom: 0.85rem;
+  object-fit: contain;
+  transition: transform 0.25s ease;
+}
+
+.quick-action-card:hover .quick-action-icon {
+  transform: scale(1.1);
+}
+
+.quick-action-title {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin: 0;
+  text-align: center;
+}
+
+/* ================= Buttons ================= */
+.btn-kpl-primary {
+  background-color: var(--kpl-primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 50px;
+  padding: 0.8rem 2rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.btn-kpl-primary:hover {
+  background-color: var(--kpl-accent);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(55, 103, 92, 0.25);
+}
+
+.btn-kpl-secondary {
+  background-color: var(--kpl-secondary);
+  color: var(--kpl-primary);
+  border: none;
+  border-radius: 50px;
+  padding: 0.8rem 2rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.btn-kpl-secondary:hover {
+  background-color: #5bbfa9;
+  color: var(--kpl-primary);
+  transform: translateY(-2px);
+}
+
+/* ================= Book Cards ================= */
+.book-card {
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.book-card:hover {
+  transform: translateY(-6px);
+}
+
+.book-cover-img {
+  width: 150px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  margin-bottom: 0.75rem;
+}
+
+.book-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--kpl-primary);
+  margin: 0;
+}
+
+/* ================= Event Cards ================= */
+.event-item-card {
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--kpl-gray);
+  transition: all 0.2s ease;
+}
+
+.event-item-card:last-child {
+  border-bottom: none;
+}
+
+.event-item-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--kpl-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.event-item-title:hover {
+  color: var(--kpl-accent);
+}
+
+.event-meta-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #888888;
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+/* ================= Dividers & Accent bars ================= */
+.section-accent-line {
+  width: 70px;
+  height: 3px;
+  background-color: var(--kpl-secondary);
+  margin: 1.25rem auto 2rem auto;
+}
+
+.section-accent-line.start {
+  margin: 1rem 0 1.5rem 0;
+}
+
+/* ================= Footer ================= */
+.kpl-footer {
+  background-color: #ffffff;
+  border-top: 1px solid var(--kpl-gray);
+  color: var(--kpl-primary);
+}
+
+.footer-heading {
+  font-size: 0.85rem;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+  color: var(--kpl-primary);
+}
+
+.footer-link {
+  color: #495057;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 0.6rem;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+  color: var(--kpl-primary);
+}
+
+.social-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--kpl-light-bg);
+  color: var(--kpl-primary);
+  text-decoration: none;
+  font-size: 1.25rem;
+  transition: all 0.25s ease;
+}
+
+.social-icon-btn:hover {
+  transform: scale(1.15);
+  background: var(--kpl-secondary);
+  color: var(--kpl-primary);
+}
+
+/* ================= Cookie Consent Modal ================= */
+.cookie-banner-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1050;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.cookie-banner-box {
+  background: #ffffff;
+  max-width: 540px;
+  border-radius: 12px;
+  padding: 2.2rem;
+  text-align: center;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Custom tabs styling */
+.nav-pills-kpl .nav-link {
+  border: 1px solid var(--kpl-primary);
+  color: var(--kpl-primary);
+  background: #ffffff;
+  border-radius: 25px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 0.5rem 1.4rem;
+  margin: 0 0.3rem;
+  transition: all 0.25s ease;
+}
+
+.nav-pills-kpl .nav-link.active,
+.nav-pills-kpl .nav-link:hover {
+  background-color: var(--kpl-secondary);
+  border-color: var(--kpl-secondary);
+  color: var(--kpl-primary);
+}
