@@ -12,8 +12,21 @@ class Command(BaseCommand):
         username = os.getenv("DEFAULT_ADMIN_USERNAME", "admin")
         email = os.getenv("DEFAULT_ADMIN_EMAIL", "admin@kplonline.org")
         password = os.getenv("DEFAULT_ADMIN_PASSWORD")
+        reset_password = os.getenv("DEFAULT_ADMIN_RESET_PASSWORD", "False").lower() == "true"
 
-        if User.objects.filter(username=username).exists():
+        user = User.objects.filter(username=username).first()
+        if user:
+            if reset_password and password:
+                user.set_password(password)
+                user.is_active = True
+                user.is_staff = True
+                user.is_superuser = True
+                user.save()
+                self.stdout.write(
+                    self.style.SUCCESS(f"Reset the password for superuser '{username}'.")
+                )
+                return
+
             self.stdout.write(
                 self.style.WARNING(f"Superuser '{username}' already exists. Skipping.")
             )
