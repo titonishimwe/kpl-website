@@ -62,3 +62,20 @@ class CreateDefaultAdminTest(TestCase):
         self.run_command(DEFAULT_ADMIN_RESET_PASSWORD="true")
         self.assertTrue(self.admin.is_active)
         self.assertTrue(self.admin.is_staff)
+
+    def test_existing_account_gets_admin_access_without_reset(self):
+        User.objects.filter(pk=self.admin.pk).update(
+            is_active=False, is_staff=False, is_superuser=False
+        )
+        self.run_command(DEFAULT_ADMIN_EMAIL="new@example.com")
+        self.assertTrue(self.admin.is_active)
+        self.assertTrue(self.admin.is_staff)
+        self.assertTrue(self.admin.is_superuser)
+        self.assertEqual(self.admin.email, "new@example.com")
+        self.assertTrue(self.admin.check_password("OldPass@2026#"))
+
+    def test_creates_missing_superuser(self):
+        self.run_command(DEFAULT_ADMIN_USERNAME="david")
+        david = User.objects.get(username="david")
+        self.assertTrue(david.is_superuser)
+        self.assertTrue(david.check_password("NewPass@2026#"))

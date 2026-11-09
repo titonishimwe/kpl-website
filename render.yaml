@@ -43,6 +43,10 @@ services:
       # Render asks for this when the Blueprint is created. It is not stored in git.
       - key: DEFAULT_ADMIN_PASSWORD
         sync: false
+      # Set to "true" in the Render Dashboard for one deploy to overwrite the
+      # admin's password with DEFAULT_ADMIN_PASSWORD, then set it back to "false".
+      - key: DEFAULT_ADMIN_RESET_PASSWORD
+        sync: false
 
     # Uploaded membership documents and images live under media/.
     # A free web service has an ephemeral disk, so those files disappear on

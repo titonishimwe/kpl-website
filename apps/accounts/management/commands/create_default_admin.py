@@ -16,20 +16,25 @@ class Command(BaseCommand):
 
         user = User.objects.filter(username=username).first()
         if user:
+            # Always make sure the account can reach the admin site, even if it
+            # was created earlier as a normal user or was later disabled.
+            user.is_active = True
+            user.is_staff = True
+            user.is_superuser = True
+            user.email = email
+            changes = "Ensured admin access"
             if reset_password and password:
                 user.set_password(password)
-                user.is_active = True
-                user.is_staff = True
-                user.is_superuser = True
-                user.save()
+                changes += " and reset the password"
+            elif reset_password:
                 self.stdout.write(
-                    self.style.SUCCESS(f"Reset the password for superuser '{username}'.")
+                    self.style.WARNING(
+                        "DEFAULT_ADMIN_RESET_PASSWORD is true but DEFAULT_ADMIN_PASSWORD "
+                        "is not set, so the password was not changed."
+                    )
                 )
-                return
-
-            self.stdout.write(
-                self.style.WARNING(f"Superuser '{username}' already exists. Skipping.")
-            )
+            user.save()
+            self.stdout.write(self.style.SUCCESS(f"{changes} for superuser '{username}'."))
             return
 
         if not password:
