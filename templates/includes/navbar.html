@@ -70,7 +70,7 @@
             <div class="row g-4">
               <div class="col-4">
                 <div class="mega-menu-title">Reserve Spaces</div>
-                <a class="mega-menu-link" href="{% url 'core:spaces' %}">Meeting &amp; Event Spaces</a>
+                <a class="mega-menu-link" href="{% url 'core:spaces' %}">Space for Events</a>
                 <a class="mega-menu-link" href="{% url 'core:meeting_rooms' %}">Meeting Rooms</a>
                 <a class="mega-menu-link" href="{% url 'core:discussion_rooms' %}">Discussion Rooms</a>
                 <a class="mega-menu-link text-primary fw-semibold" href="{% url 'core:reserve_room' %}">Online Reservation &rarr;</a>
@@ -79,12 +79,11 @@
                 <div class="mega-menu-title">Library Resources</div>
                 <a class="mega-menu-link" href="{% url 'core:membership' %}">Get a Library Card</a>
                 <a class="mega-menu-link" href="https://kplonline.overdrive.com/" target="_blank">Digital Library</a>
-                <a class="mega-menu-link" href="https://library.kplonline.org/" target="_blank">Online Catalog (Koha)</a>
+                <a class="mega-menu-link" href="https://library.kplonline.org/" target="_blank">Physical Catalog</a>
               </div>
               <div class="col-4">
                 <div class="mega-menu-title">Programs &amp; Events</div>
                 <a class="mega-menu-link" href="{% url 'core:events' %}">Upcoming Events</a>
-                <a class="mega-menu-link" href="https://wc.kplonline.org" target="_blank">Writing Competition</a>
               </div>
             </div>
           </div>
@@ -143,7 +142,7 @@
           </a>
           <div class="collapse ps-3" id="mobileServicesCollapse">
             <ul class="nav flex-column gap-1 fs-6 fw-normal mt-2">
-              <li><a class="nav-link text-secondary" href="{% url 'core:spaces' %}">Meeting &amp; Event Spaces</a></li>
+              <li><a class="nav-link text-secondary" href="{% url 'core:spaces' %}">Space for Events</a></li>
               <li><a class="nav-link text-secondary" href="{% url 'core:meeting_rooms' %}">Meeting Rooms</a></li>
               <li><a class="nav-link text-secondary" href="{% url 'core:discussion_rooms' %}">Discussion Rooms</a></li>
               <li><a class="nav-link text-secondary" href="{% url 'core:membership' %}">Get a Library Card</a></li>

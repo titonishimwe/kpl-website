@@ -37,9 +37,9 @@ services:
           name: kpl-db
           property: connectionString
       - key: DEFAULT_ADMIN_USERNAME
-        value: admin
+        value: david
       - key: DEFAULT_ADMIN_EMAIL
-        value: admin@kplonline.org
+        value: gacamumakubadavid@gmail.com
       # Render asks for this when the Blueprint is created. It is not stored in git.
       - key: DEFAULT_ADMIN_PASSWORD
         sync: false

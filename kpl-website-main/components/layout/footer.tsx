@@ -1,5 +1,6 @@
 "use client";
 
+import { Phone, Mail } from "lucide-react";
 import SegmentBar from "@/components/segmentbar";
 import XIcon from "@/components/icons/x-icon";
 import YoutubeIcon from "@/components/icons/youtube-icon";
@@ -39,15 +40,19 @@ export default function Footer() {
               </span>
             </a>
 
-            <p>
-              <span className="font-light uppercase text-gray-400 mr-2">T</span>
+            <p className="flex items-center">
+              <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-gray-600 mr-2" aria-hidden="true">
+                <Phone className="w-4 h-4" />
+              </span>
               <a href="tel:+250788500777" className="hover:text-black transition-colors">
                 +250 788 500 777
               </a>
             </p>
 
-            <p>
-              <span className="font-light uppercase text-gray-400 mr-2">E</span>
+            <p className="flex items-center">
+              <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 text-gray-600 mr-2" aria-hidden="true">
+                <Mail className="w-4 h-4" />
+              </span>
               <a href="mailto:info@kplonline.org" className="hover:text-black transition-colors">
                 info@kplonline.org
               </a>
