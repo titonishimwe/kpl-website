@@ -1,0 +1,30 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}{% if obj %}Edit {{ res.singular }}{% else %}Add {{ res.singular }}{% endif %}{% endblock %}
+{% block breadcrumbs %}<a href="{% url 'dashboard:resource_list' res.slug %}" class="dash-crumb"><i class="bi bi-arrow-left me-1"></i>{{ res.title }}</a>{% endblock %}
+{% block heading %}{% if obj %}Edit {{ res.singular }}{% else %}Add {{ res.singular }}{% endif %}{% endblock %}
+{% block subheading %}{% if obj %}<p class="dash-subtitle">{{ obj }}</p>{% elif res.help %}<p class="dash-subtitle">{{ res.help }}</p>{% endif %}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-12 col-xl-8">
+    <form method="post" enctype="multipart/form-data" class="dash-card" novalidate>
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+      <div class="row">
+        {% for field in form %}
+          <div class="{% if field.field.widget.input_type == 'checkbox' or field.field.widget.input_type == 'number' or field.field.widget.input_type == 'date' or field.field.widget.input_type == 'select' %}col-12 col-md-6{% else %}col-12{% endif %}">
+            {% include "dashboard/_field.html" %}
+          </div>
+        {% endfor %}
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-dark"><i class="bi bi-check-lg me-1"></i>Save</button>
+        {% if not obj %}<button type="submit" name="save_add" value="1" class="btn btn-outline-dark">Save and add another</button>{% endif %}
+        <a href="{% url 'dashboard:resource_list' res.slug %}" class="btn btn-link text-muted">Cancel</a>
+        {% if obj %}<a href="{% url 'dashboard:resource_delete' res.slug obj.pk %}" class="btn btn-link text-danger ms-auto"><i class="bi bi-trash me-1"></i>Delete</a>{% endif %}
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

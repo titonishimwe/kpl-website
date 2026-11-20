@@ -1,0 +1,45 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block title %}Website settings{% endblock %}
+{% block breadcrumbs %}<span class="dash-crumb">Settings</span>{% endblock %}
+{% block heading %}Website settings{% endblock %}
+{% block subheading %}<p class="dash-subtitle">Cover photo, contact details, opening hours and social links. Changes go live as soon as you save.</p>{% endblock %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data" novalidate>
+  {% csrf_token %}
+  <div class="row g-3">
+    <div class="col-12 col-xl-8">
+      {% for title, icon, fields in form.sections %}
+        <div class="dash-card mb-3">
+          <h2 class="dash-card-title mb-3"><i class="bi bi-{{ icon }} me-2 text-accent"></i>{{ title }}</h2>
+          <div class="row">
+            {% for field in fields %}
+              <div class="{% if title == 'Opening hours' or title == 'Social media' or title == 'Contact information' %}col-12 col-md-6{% else %}col-12{% endif %}">
+                {% include "dashboard/_field.html" %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="col-12 col-xl-4">
+      <div class="dash-card mb-3 sticky-xl-top" style="top: 1rem;">
+        <h2 class="dash-card-title mb-3">Homepage cover preview</h2>
+        <div class="hero-preview" style="background-image: url('{% if form.instance.hero_image %}{{ form.instance.hero_image.url }}{% else %}{% static 'images/bg/kplfront.jpg' %}{% endif %}');">
+          <div>
+            <strong>{{ form.instance.hero_title }}</strong>
+            <span>{{ form.instance.hero_subtitle }}</span>
+          </div>
+        </div>
+        {% if not form.instance.hero_image %}<p class="small text-muted mt-2 mb-0">Showing the default photo of the library building.</p>{% endif %}
+        <hr>
+        <button type="submit" class="btn btn-dark w-100"><i class="bi bi-check-lg me-1"></i>Save settings</button>
+        {% if form.instance.updated_at %}<p class="small text-muted mt-2 mb-0 text-center">Last saved {{ form.instance.updated_at|date:"j M Y, H:i" }}</p>{% endif %}
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}

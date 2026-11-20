@@ -20,14 +20,13 @@
       {% for room in rooms %}
         <div class="col-12 col-md-4">
           <div class="card h-100 border rounded-4 overflow-hidden shadow-sm hover-shadow transition">
-            <div class="bg-light p-4 text-center border-bottom d-flex align-items-center justify-content-center" style="min-height: 160px;">
-              <span class="fs-1 text-secondary"><i class="bi bi-people-fill"></i></span>
-            </div>
+            {% include "core/_space_media.html" with icon="people" %}
             <div class="card-body p-4">
               <h3 class="fs-4 fw-bold mb-1">{{ room.title }}</h3>
               <p class="badge bg-secondary text-dark text-uppercase tracking-wider mb-3">{{ room.capacity }}</p>
               <div class="section-accent-line start mb-3"></div>
               <p class="text-muted leading-relaxed mb-0">{{ room.description }}</p>
+              {% include "core/_space_rates.html" %}
             </div>
           </div>
         </div>

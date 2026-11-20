@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import MembershipApplication, RoomReservation, Event, BookArrival
+from .models import MembershipApplication, RoomReservation, Event, StaffPick, ImpactStat, SiteSettings, Space, HomeSlide, ClosedDay
 
 
 @admin.register(MembershipApplication)
@@ -40,8 +40,42 @@ class EventAdmin(admin.ModelAdmin):
     search_fields = ["title", "location", "description"]
 
 
-@admin.register(BookArrival)
-class BookArrivalAdmin(admin.ModelAdmin):
-    list_display = ["title", "category", "order"]
-    list_filter = ["category"]
-    search_fields = ["title"]
+@admin.register(StaffPick)
+class StaffPickAdmin(admin.ModelAdmin):
+    list_display = ["title", "author", "category", "recommended_by", "is_active", "added_on", "order"]
+    list_editable = ["is_active", "order"]
+    list_filter = ["is_active", "category", "added_on"]
+    search_fields = ["title", "author", "recommended_by"]
+
+
+@admin.register(ImpactStat)
+class ImpactStatAdmin(admin.ModelAdmin):
+    list_display = ["value", "label", "icon", "is_active", "order"]
+    list_editable = ["is_active", "order"]
+
+
+@admin.register(Space)
+class SpaceAdmin(admin.ModelAdmin):
+    list_display = ["name", "category", "capacity_label", "is_active", "order"]
+    list_editable = ["is_active", "order"]
+    list_filter = ["category", "is_active"]
+
+
+@admin.register(HomeSlide)
+class HomeSlideAdmin(admin.ModelAdmin):
+    list_display = ["title", "is_active", "order"]
+    list_editable = ["is_active", "order"]
+
+
+@admin.register(ClosedDay)
+class ClosedDayAdmin(admin.ModelAdmin):
+    list_display = ["date", "reason"]
+
+
+@admin.register(SiteSettings)
+class SiteSettingsAdmin(admin.ModelAdmin):
+    def has_add_permission(self, request):
+        return not SiteSettings.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        return False

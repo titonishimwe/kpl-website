@@ -5,31 +5,33 @@
 {% block description %}Kigali Public Library is an open and public platform that inspires communities to read, learn and discover.{% endblock %}
 
 {% block content %}
-<!-- ================= HERO SECTION ================= -->
-<section class="hero-section" style="background-image: url('{% static 'images/bg/kplfront.jpg' %}');">
+<!-- ================= HERO ================= -->
+<section class="hero-section" style="background-image: url('{% if site.hero_image %}{{ site.hero_image.url }}{% else %}{% static 'images/bg/kplfront.jpg' %}{% endif %}');">
   <div class="hero-overlay"></div>
-  <div class="hero-search-bar-wrapper">
-    <div class="d-flex flex-column flex-md-row align-items-center gap-2">
-      <!-- Catalog Direct Link -->
-      <a href="https://library.kplonline.org/" target="_blank" rel="noopener noreferrer" class="btn btn-catalog w-100 w-md-auto text-nowrap">
-        <i class="bi bi-journal-bookmark me-2"></i>Catalog
-      </a>
+  <div class="hero-content container-xxl">
+    <p class="hero-eyebrow">Kigali Public Library</p>
+    <h1 class="hero-title">{{ site.hero_title }}</h1>
+    <p class="hero-subtitle">{{ site.hero_subtitle }}</p>
 
-      <!-- Koha OPAC Live Search -->
-      <form id="catalogSearchForm" class="d-flex flex-grow-1 w-100" role="search">
-        <input 
-          id="catalogSearchInput" 
-          type="text" 
-          class="form-control hero-search-input" 
-          placeholder="Search the library catalog..." 
-          aria-label="Search the catalog"
-          required
-        >
-        <button type="submit" class="btn btn-search-submit d-flex align-items-center gap-2" aria-label="Search">
-          <i class="bi bi-search"></i>
-          <span class="d-none d-sm-inline">Search</span>
-        </button>
-      </form>
+    <div class="hero-search-bar-wrapper">
+      <div class="d-flex flex-column flex-md-row align-items-stretch gap-2">
+        <a href="https://library.kplonline.org/" target="_blank" rel="noopener noreferrer" class="btn btn-catalog text-nowrap">
+          <i class="bi bi-journal-bookmark me-2"></i>Catalog
+        </a>
+        <form id="catalogSearchForm" class="d-flex flex-grow-1" role="search">
+          <input id="catalogSearchInput" type="text" class="form-control hero-search-input"
+                 placeholder="Search the library catalog..." aria-label="Search the catalog" required>
+          <button type="submit" class="btn btn-search-submit d-flex align-items-center gap-2" aria-label="Search">
+            <i class="bi bi-search"></i>
+            <span class="d-none d-sm-inline">Search</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="hero-actions">
+      <a href="#discover" class="btn btn-kpl-secondary">Explore Our Library <i class="bi bi-arrow-down ms-2"></i></a>
+      <a href="{% url 'core:membership' %}" class="btn btn-kpl-outline-light">Get a Library Card</a>
     </div>
   </div>
 </section>
@@ -37,12 +39,12 @@
 <!-- ================= QUICK ACTIONS ================= -->
 <section class="border-bottom py-4 py-md-5 bg-white">
   <div class="container-xxl">
-    <div class="row g-4 justify-content-center text-center">
+    <div class="row g-3 g-md-4 justify-content-center text-center">
       {% for item in quick_links %}
         <div class="col-6 col-md-3">
           <a href="{{ item.href }}" {% if item.external %}target="_blank" rel="noopener noreferrer"{% endif %} class="quick-action-card h-100">
-            <img src="{% static item.icon %}" alt="{{ item.title }}" class="quick-action-icon">
-            <h3 class="quick-action-title">{{ item.title }}</h3>
+            <img src="{% static item.icon %}" alt="" class="quick-action-icon">
+            <h2 class="quick-action-title">{{ item.title }}</h2>
           </a>
         </div>
       {% endfor %}
@@ -50,15 +52,37 @@
   </div>
 </section>
 
-<!-- ================= LIBRARY EVENTS & HAPPENINGS ================= -->
-<section class="py-5 py-lg-6 bg-light">
+<!-- ================= DISCOVER KPL ================= -->
+<section id="discover" class="section bg-white">
+  <div class="container-xxl">
+    <div class="section-heading text-center">
+      <p class="section-eyebrow">Discover KPL</p>
+      <h2 class="section-title">Explore Our Library</h2>
+      <div class="section-accent-line"></div>
+      <p class="section-lead mx-auto">Everything the library offers, in one place: spaces to work and gather, membership, and resources you can use in the library or from home.</p>
+    </div>
+    <div class="row g-4">
+      {% for item in discover_links %}
+        <div class="col-12 col-md-4">
+          <a href="{{ item.href }}" {% if item.external %}target="_blank" rel="noopener noreferrer"{% endif %} class="discover-card">
+            <span class="discover-icon"><i class="bi bi-{{ item.icon }}"></i></span>
+            <h3 class="card-title-kpl">{{ item.title }}</h3>
+            <p class="text-muted mb-4">{{ item.text }}</p>
+            <span class="discover-link">{{ item.cta }} <i class="bi bi-arrow-right ms-1"></i></span>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ================= WHAT'S HAPPENING ================= -->
+<section class="section bg-light border-top border-bottom">
   <div class="container-xxl">
     <div class="row g-4 g-lg-5 align-items-start">
-      
-      <!-- Left: Featured Carousel -->
       <div class="col-12 col-lg-7">
-        <h2 class="fs-2 fw-bold mb-4 tracking-tight">What’s Happening at the Library</h2>
-        <div id="eventsCarousel" class="carousel slide shadow rounded-3 overflow-hidden bg-white" data-bs-ride="carousel">
+        <h2 class="section-title mb-4">What’s Happening at the Library</h2>
+        <div id="eventsCarousel" class="carousel slide shadow-sm rounded-4 overflow-hidden bg-white" data-bs-ride="carousel">
           <div class="carousel-indicators">
             {% for slide in carousel_slides %}
               <button type="button" data-bs-target="#eventsCarousel" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" aria-label="Slide {{ forloop.counter }}"></button>
@@ -67,10 +91,12 @@
           <div class="carousel-inner">
             {% for slide in carousel_slides %}
               <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                <img src="{% static slide.image %}" class="d-block w-100" alt="{{ slide.alt }}" style="height: 380px; object-fit: cover;">
+                {% if slide.link %}<a href="{{ slide.link }}">{% endif %}
+                <img src="{% if slide.image.url %}{{ slide.image.url }}{% else %}{% static slide.image %}{% endif %}" class="d-block w-100 events-carousel-img" alt="{{ slide.title }}">
+                {% if slide.link %}</a>{% endif %}
                 <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-75 rounded px-3 py-2">
-                  <h5 class="fw-bold mb-1">{{ slide.title }}</h5>
-                  <p class="small mb-0">Join us in celebrating community reading and learning.</p>
+                  <h3 class="fs-5 fw-bold mb-1">{{ slide.title }}</h3>
+                  {% if slide.caption %}<p class="small mb-0">{{ slide.caption }}</p>{% endif %}
                 </div>
               </div>
             {% endfor %}
@@ -86,10 +112,9 @@
         </div>
       </div>
 
-      <!-- Right: Upcoming Events List -->
       <div class="col-12 col-lg-5">
-        <h2 class="fs-2 fw-bold mb-4 tracking-tight">Upcoming Events</h2>
-        <div class="bg-white p-4 rounded-3 shadow-sm mb-4">
+        <h2 class="section-title mb-4">Upcoming Events</h2>
+        <div class="bg-white px-4 py-2 rounded-4 shadow-sm mb-4">
           {% for event in events %}
             <div class="event-item-card">
               <a href="{{ event.link|default:'#' }}" class="event-item-title">{{ event.title }}</a>
@@ -104,88 +129,102 @@
                 </p>
               </div>
             </div>
+          {% empty %}
+            <p class="text-muted py-3 mb-0">No upcoming events right now. Please check back soon.</p>
           {% endfor %}
         </div>
-        <div>
-          <a href="{% url 'core:events' %}" class="btn btn-kpl-primary">
-            View All Events <i class="bi bi-arrow-right ms-2"></i>
-          </a>
-        </div>
+        <a href="{% url 'core:events' %}" class="btn btn-kpl-primary">
+          View All Events <i class="bi bi-arrow-right ms-2"></i>
+        </a>
       </div>
-
     </div>
   </div>
 </section>
 
-<!-- ================= NEW ARRIVALS SECTION ================= -->
-<section class="py-5 bg-white">
+<!-- ================= OUR IMPACT ================= -->
+{% if impact_stats %}
+<section class="section impact-section">
   <div class="container-xxl">
-    
-    <!-- Arrivals Header with Categories -->
-    <div class="p-4 p-md-5 rounded-4 mb-5 text-white" style="background-color: var(--kpl-primary);">
-      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-        <h2 class="display-6 fw-bold text-uppercase mb-0">New Arrivals</h2>
-        
-        <!-- Category Nav Pills -->
-        <ul class="nav nav-pills nav-pills-kpl" id="arrivalsTab" role="tablist">
-          <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="adult-tab" data-bs-toggle="pill" data-bs-target="#adult-pane" type="button" role="tab">Adult</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="teens-tab" data-bs-toggle="pill" data-bs-target="#teens-pane" type="button" role="tab">Teens</button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="kids-tab" data-bs-toggle="pill" data-bs-target="#kids-pane" type="button" role="tab">Kids</button>
-          </li>
+    <div class="section-heading text-center">
+      <p class="section-eyebrow">Our Impact</p>
+      <h2 class="section-title">Serving Our Community</h2>
+      <div class="section-accent-line"></div>
+      <p class="section-lead mx-auto">KPL’s reach across Kigali and beyond: the readers, learners and families we serve every year.</p>
+    </div>
+    <div class="row g-3 g-md-4 justify-content-center">
+      {% for stat in impact_stats %}
+        <div class="col-6 col-lg-3">
+          <div class="impact-card">
+            <i class="bi bi-{{ stat.icon }} impact-icon" aria-hidden="true"></i>
+            <div class="impact-value">{{ stat.value }}</div>
+            <div class="impact-label">{{ stat.label }}</div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% elif user.is_staff %}
+<section class="py-4 bg-white">
+  <div class="container-xxl">
+    <div class="alert alert-info mb-0">
+      <strong>Staff only:</strong> the “Our Impact” section appears here once you add figures under
+      <a href="/admin/core/impactstat/" class="alert-link">Impact statistics</a> in the admin. Visitors don’t see this message.
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ================= STAFF PICKS ================= -->
+<section class="section bg-white">
+  <div class="container-xxl">
+    <div class="staff-picks-header">
+      <div>
+        <p class="section-eyebrow text-secondary-kpl">Recommended by the KPL team</p>
+        <h2 class="section-title text-white mb-1">Staff Picks</h2>
+        <p class="mb-0 text-white-50 small">
+          Fresh recommendations every two weeks{% if picks_updated %} · Updated {{ picks_updated|date:"j F Y" }}{% endif %}
+        </p>
+      </div>
+      {% if pick_tabs|length > 1 %}
+        <ul class="nav nav-pills nav-pills-kpl" id="picksTab" role="tablist">
+          {% for tab in pick_tabs %}
+            <li class="nav-item" role="presentation">
+              <button class="nav-link {% if forloop.first %}active{% endif %}" id="{{ tab.key }}-tab" data-bs-toggle="pill"
+                      data-bs-target="#{{ tab.key }}-pane" type="button" role="tab"
+                      aria-controls="{{ tab.key }}-pane" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">{{ tab.label }}</button>
+            </li>
+          {% endfor %}
         </ul>
-      </div>
+      {% endif %}
     </div>
 
-    <!-- Tab Contents -->
-    <div class="tab-content" id="arrivalsTabContent">
-      <!-- Adult Tab -->
-      <div class="tab-pane fade show active" id="adult-pane" role="tabpanel" tabindex="0">
-        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4 justify-content-center">
-          {% for book in adult_books %}
-            <div class="col">
-              <div class="book-card">
-                <img src="{% if book.cover %}{% static book.cover %}{% elif book.cover_image %}{{ book.cover_image.url }}{% else %}{% static 'images/covers/athousand.jpg' %}{% endif %}" alt="{{ book.title }}" class="book-cover-img img-fluid">
-                <h4 class="book-title">{{ book.title }}</h4>
+    <div class="tab-content" id="picksTabContent">
+      {% for tab in pick_tabs %}
+        <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="{{ tab.key }}-pane" role="tabpanel" aria-labelledby="{{ tab.key }}-tab" tabindex="0">
+          <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3 g-md-4 justify-content-center">
+            {% for book in tab.books %}
+              <div class="col">
+                <div class="book-card">
+                  <img src="{% if book.cover %}{% static book.cover %}{% elif book.cover_image %}{{ book.cover_image.url }}{% else %}{% static 'images/covers/athousand.jpg' %}{% endif %}"
+                       alt="Cover of {{ book.title }}" class="book-cover-img" loading="lazy">
+                  <h3 class="book-title">{{ book.title }}</h3>
+                  {% if book.author %}<p class="book-author">{{ book.author }}</p>{% endif %}
+                  {% if book.note %}<p class="book-note">“{{ book.note }}”</p>{% endif %}
+                  {% if book.recommended_by %}<p class="book-recommender">— {{ book.recommended_by }}</p>{% endif %}
+                </div>
               </div>
-            </div>
-          {% endfor %}
+            {% endfor %}
+          </div>
         </div>
-      </div>
-
-      <!-- Teens Tab -->
-      <div class="tab-pane fade" id="teens-pane" role="tabpanel" tabindex="0">
-        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4 justify-content-center">
-          {% for book in teen_books %}
-            <div class="col">
-              <div class="book-card">
-                <img src="{% if book.cover %}{% static book.cover %}{% elif book.cover_image %}{{ book.cover_image.url }}{% else %}{% static 'images/covers/wimpykid.jpg' %}{% endif %}" alt="{{ book.title }}" class="book-cover-img img-fluid">
-                <h4 class="book-title">{{ book.title }}</h4>
-              </div>
-            </div>
-          {% endfor %}
-        </div>
-      </div>
-
-      <!-- Kids Tab -->
-      <div class="tab-pane fade" id="kids-pane" role="tabpanel" tabindex="0">
-        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4 justify-content-center">
-          {% for book in kid_books %}
-            <div class="col">
-              <div class="book-card">
-                <img src="{% if book.cover %}{% static book.cover %}{% elif book.cover_image %}{{ book.cover_image.url }}{% else %}{% static 'images/covers/sulwe.jpeg' %}{% endif %}" alt="{{ book.title }}" class="book-cover-img img-fluid">
-                <h4 class="book-title">{{ book.title }}</h4>
-              </div>
-            </div>
-          {% endfor %}
-        </div>
-      </div>
+      {% endfor %}
     </div>
 
+    <div class="text-center mt-5">
+      <a href="https://library.kplonline.org/" target="_blank" rel="noopener noreferrer" class="btn btn-kpl-primary">
+        Find these in the catalog <i class="bi bi-arrow-right ms-2"></i>
+      </a>
+    </div>
   </div>
 </section>
 {% endblock %}

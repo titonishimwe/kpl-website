@@ -1,0 +1,22 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Delete {{ res.singular }}{% endblock %}
+{% block breadcrumbs %}<a href="{% url 'dashboard:resource_list' res.slug %}" class="dash-crumb"><i class="bi bi-arrow-left me-1"></i>{{ res.title }}</a>{% endblock %}
+{% block heading %}Delete {{ res.singular }}?{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-12 col-lg-7">
+    <form method="post" class="dash-card">
+      {% csrf_token %}
+      <p class="mb-1">You are about to permanently delete:</p>
+      <p class="fs-5 fw-semibold">{{ obj }}</p>
+      <p class="text-muted">This can’t be undone. It will disappear from the website straight away.</p>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Yes, delete</button>
+        <a href="{% url 'dashboard:resource_list' res.slug %}" class="btn btn-link text-muted">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

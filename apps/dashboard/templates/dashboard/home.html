@@ -1,0 +1,233 @@
+{% extends "dashboard/base.html" %}
+{% load dashboard_tags %}
+
+{% block title %}Overview{% endblock %}
+{% block heading %}Good {% now "G" as hour %}{% if hour|add:0 < 12 %}morning{% elif hour|add:0 < 17 %}afternoon{% else %}evening{% endif %}, {{ user.first_name|default:user.username }}{% endblock %}
+{% block subheading %}<p class="dash-subtitle">Here’s what’s happening at Kigali Public Library today, {% now "l j F Y" %}.</p>{% endblock %}
+{% block actions %}
+  <a href="{% url 'dashboard:applications_report' %}" class="btn btn-outline-dark" target="_blank"><i class="bi bi-file-earmark-pdf me-1"></i>Membership report</a>
+  <a href="{% url 'dashboard:resource_add' 'events' %}" class="btn btn-dark"><i class="bi bi-plus-lg me-1"></i>New event</a>
+{% endblock %}
+
+{% block content %}
+<!-- KPI tiles -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-xl-3">
+    <a href="{% url 'dashboard:applications' %}?status=pending" class="kpi-card">
+      <span class="kpi-icon bg-warning-subtle text-warning-emphasis"><i class="bi bi-hourglass-split"></i></span>
+      <span class="kpi-value">{{ stats.applications_pending }}</span>
+      <span class="kpi-label">Applications to review</span>
+    </a>
+  </div>
+  <div class="col-6 col-xl-3">
+    <a href="{% url 'dashboard:applications' %}?status=approved" class="kpi-card">
+      <span class="kpi-icon bg-success-subtle text-success-emphasis"><i class="bi bi-person-check"></i></span>
+      <span class="kpi-value">{{ stats.members_approved }}</span>
+      <span class="kpi-label">Approved members</span>
+    </a>
+  </div>
+  <div class="col-6 col-xl-3">
+    <a href="{% url 'dashboard:reservations' %}?status=pending" class="kpi-card">
+      <span class="kpi-icon bg-info-subtle text-info-emphasis"><i class="bi bi-calendar-check"></i></span>
+      <span class="kpi-value">{{ stats.reservations_pending }}</span>
+      <span class="kpi-label">Bookings to confirm</span>
+      <span class="kpi-foot">{{ stats.reservations_upcoming }} confirmed upcoming</span>
+    </a>
+  </div>
+  <div class="col-6 col-xl-3">
+    <a href="{% url 'dashboard:resource_list' 'events' %}" class="kpi-card">
+      <span class="kpi-icon bg-primary-subtle text-primary-emphasis"><i class="bi bi-calendar-event"></i></span>
+      <span class="kpi-value">{{ stats.events_upcoming }}</span>
+      <span class="kpi-label">Upcoming events</span>
+    </a>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <!-- Trend chart -->
+  <div class="col-12 col-xl-8">
+    <div class="dash-card h-100">
+      <div class="dash-card-head">
+        <div>
+          <h2 class="dash-card-title">Activity over the last 12 months</h2>
+          <p class="dash-card-sub mb-0">
+            {{ stats.applications_this_month }} application{{ stats.applications_this_month|pluralize }} this month
+            {% if stats.applications_change > 0 %}<span class="text-success fw-semibold"><i class="bi bi-arrow-up-short"></i>{{ stats.applications_change }} vs last month</span>
+            {% elif stats.applications_change < 0 %}<span class="text-danger fw-semibold"><i class="bi bi-arrow-down-short"></i>{{ stats.applications_change|stringformat:"d"|slice:"1:" }} vs last month</span>
+            {% else %}<span class="text-muted">· same as last month</span>{% endif %}
+          </p>
+        </div>
+      </div>
+      <div class="chart-box"><canvas id="trendChart" aria-label="Membership applications and reservations per month" role="img"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Needs attention -->
+  <div class="col-12 col-xl-4">
+    <div class="dash-card h-100">
+      <div class="dash-card-head"><h2 class="dash-card-title">Needs attention</h2></div>
+      {% if attention %}
+        <ul class="list-unstyled mb-0 attention-list">
+          {% for icon, text, url in attention %}
+            <li><a href="{{ url }}"><i class="bi bi-{{ icon }}"></i><span>{{ text }}</span><i class="bi bi-chevron-right ms-auto"></i></a></li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="empty-state py-4"><i class="bi bi-check2-circle text-success"></i><p class="mb-0">All caught up. Nothing needs your attention.</p></div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-12 col-lg-6 col-xl-4">
+    <div class="dash-card h-100">
+      <div class="dash-card-head"><h2 class="dash-card-title">Applications by membership type</h2></div>
+      {% if chart.type_values %}
+        <div class="chart-box chart-box-sm"><canvas id="typeChart" aria-label="Applications by membership type" role="img"></canvas></div>
+      {% else %}
+        <div class="empty-state"><i class="bi bi-pie-chart"></i><p class="mb-0">No applications yet.</p></div>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-12 col-lg-6 col-xl-4">
+    <div class="dash-card h-100">
+      <div class="dash-card-head"><h2 class="dash-card-title">Most booked spaces</h2></div>
+      {% if chart.space_values %}
+        <div class="chart-box chart-box-sm"><canvas id="spaceChart" aria-label="Reservations per space" role="img"></canvas></div>
+      {% else %}
+        <div class="empty-state"><i class="bi bi-bar-chart"></i><p class="mb-0">No reservations yet.</p></div>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-12 col-xl-4">
+    <div class="dash-card h-100">
+      <div class="dash-card-head"><h2 class="dash-card-title">At a glance</h2></div>
+      <dl class="glance-list mb-0">
+        <div><dt>Total applications</dt><dd>{{ stats.applications_total }}</dd></div>
+        <div><dt>Registered website users</dt><dd>{{ stats.users_total }}</dd></div>
+        {% for label, n in content_counts.items %}
+          <div><dt>{{ label }} on homepage</dt><dd>{{ n }}</dd></div>
+        {% endfor %}
+      </dl>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-xl-6">
+    <div class="dash-card h-100">
+      <div class="dash-card-head">
+        <h2 class="dash-card-title">Latest membership applications</h2>
+        <a href="{% url 'dashboard:applications' %}" class="small fw-semibold">View all</a>
+      </div>
+      {% if recent_applications %}
+        <div class="table-responsive">
+          <table class="table dash-table align-middle mb-0">
+            <tbody>
+              {% for a in recent_applications %}
+                <tr class="row-link" onclick="location.href='{% url 'dashboard:application_detail' a.pk %}'">
+                  <td>
+                    <a href="{% url 'dashboard:application_detail' a.pk %}" class="fw-semibold text-dark text-decoration-none">{{ a.first_name }} {{ a.last_name }}</a>
+                    <div class="small text-muted">{{ a.get_membership_type_display }}</div>
+                  </td>
+                  <td class="text-muted small text-nowrap">{{ a.created_at|timesince }} ago</td>
+                  <td class="text-end">{% status_badge a %}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="empty-state"><i class="bi bi-inbox"></i><p class="mb-0">No applications yet.</p></div>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-12 col-xl-6">
+    <div class="dash-card h-100">
+      <div class="dash-card-head">
+        <h2 class="dash-card-title">Upcoming reservations</h2>
+        <a href="{% url 'dashboard:reservations' %}" class="small fw-semibold">View all</a>
+      </div>
+      {% if upcoming_reservations %}
+        <div class="table-responsive">
+          <table class="table dash-table align-middle mb-0">
+            <tbody>
+              {% for r in upcoming_reservations %}
+                <tr class="row-link" onclick="location.href='{% url 'dashboard:reservation_detail' r.pk %}'">
+                  <td class="text-nowrap"><span class="date-chip"><b>{{ r.reservation_date|date:"j" }}</b>{{ r.reservation_date|date:"M" }}</span></td>
+                  <td>
+                    <a href="{% url 'dashboard:reservation_detail' r.pk %}" class="fw-semibold text-dark text-decoration-none">{{ r.space_type }}</a>
+                    <div class="small text-muted">{{ r.name }}{% if r.organization %} · {{ r.organization }}{% endif %}</div>
+                  </td>
+                  <td class="text-end">{% status_badge r %}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="empty-state"><i class="bi bi-calendar"></i><p class="mb-0">No upcoming reservations.</p></div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{{ chart|json_script:"chart-data" }}
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+(function () {
+  const data = JSON.parse(document.getElementById("chart-data").textContent);
+  const ink = "#0B1412", mint = "#6DCDB8", accent = "#37675C", grid = "rgba(11,20,18,0.06)";
+  Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+  Chart.defaults.color = "#6c757d";
+
+  new Chart(document.getElementById("trendChart"), {
+    type: "bar",
+    data: {
+      labels: data.labels,
+      datasets: [
+        { label: "Membership applications", data: data.applications, backgroundColor: accent, borderRadius: 4, maxBarThickness: 22 },
+        { label: "Reservations", data: data.reservations, backgroundColor: mint, borderRadius: 4, maxBarThickness: 22 },
+      ],
+    },
+    options: {
+      maintainAspectRatio: false,
+      plugins: { legend: { position: "bottom", labels: { usePointStyle: true, boxWidth: 8 } } },
+      scales: {
+        x: { grid: { display: false } },
+        y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: grid } },
+      },
+    },
+  });
+
+  const typeCanvas = document.getElementById("typeChart");
+  if (typeCanvas) {
+    new Chart(typeCanvas, {
+      type: "doughnut",
+      data: {
+        labels: data.type_labels,
+        datasets: [{ data: data.type_values, backgroundColor: [accent, mint, ink, "#BD31BB", "#9fb8b2", "#c9a227"], borderWidth: 2, borderColor: "#fff" }],
+      },
+      options: { maintainAspectRatio: false, cutout: "62%", plugins: { legend: { position: "bottom", labels: { usePointStyle: true, boxWidth: 8 } } } },
+    });
+  }
+
+  const spaceCanvas = document.getElementById("spaceChart");
+  if (spaceCanvas) {
+    new Chart(spaceCanvas, {
+      type: "bar",
+      data: { labels: data.space_labels.map(l => l.replace(/ \(.*\)$/, "")), datasets: [{ label: "Reservations", data: data.space_values, backgroundColor: accent, borderRadius: 4 }] },
+      options: {
+        indexAxis: "y", maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { x: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: grid } }, y: { grid: { display: false } } },
+      },
+    });
+  }
+})();
+</script>
+{% endblock %}

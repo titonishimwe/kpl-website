@@ -53,9 +53,9 @@
       </p>
       <div class="p-4 bg-light rounded-3 border">
         <p class="fw-bold mb-1">Kigali Public Library</p>
-        <p class="mb-1 text-muted">KN 8 Avenue, Gasabo, Kigali, Rwanda</p>
-        <p class="mb-1"><a href="mailto:info@kplonline.org" class="text-decoration-none">info@kplonline.org</a></p>
-        <p class="mb-0 text-muted">+250 788 500 777</p>
+        <p class="mb-1 text-muted">{{ site.address_line1 }}, {{ site.address_line2 }}</p>
+        <p class="mb-1"><a href="mailto:{{ site.email }}" class="text-decoration-none">{{ site.email }}</a></p>
+        <p class="mb-0 text-muted">{{ site.phone }}</p>
       </div>
     </div>
   </div>

@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     # Local apps
     "apps.core",
     "apps.accounts",
+    "apps.dashboard",
 ]
 
 # MIDDLEWARE
@@ -82,6 +83,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "apps.core.context_processors.library_status",
+                "apps.core.context_processors.site_settings",
             ],
         },
     },

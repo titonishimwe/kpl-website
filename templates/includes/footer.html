@@ -16,25 +16,27 @@
         <h6 class="footer-heading">Contact</h6>
         <p class="fs-5 fw-semibold mb-2">Kigali Public Library</p>
         <p class="text-muted mb-2">
-          KN 8 Avenue, Gasabo<br>
-          Kigali, Rwanda
+          {{ site.address_line1 }}<br>
+          {{ site.address_line2 }}
         </p>
+        {% if site.map_url %}
         <p class="mb-3">
-          <a href="https://maps.app.goo.gl/ZjdB5MHwKms4dHMC9" target="_blank" rel="noopener noreferrer" class="text-decoration-none text-success fw-medium">
+          <a href="{{ site.map_url }}" target="_blank" rel="noopener noreferrer" class="text-decoration-none text-success fw-medium">
             View on Map <i class="bi bi-arrow-right"></i>
           </a>
         </p>
+        {% endif %}
         <p class="mb-2 d-flex align-items-center text-muted">
           <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10 text-success me-2" style="width:32px;height:32px;" aria-hidden="true">
             <i class="bi bi-telephone"></i>
           </span>
-          <a href="tel:+250788500777" class="text-decoration-none text-dark">+250 788 500 777</a>
+          <a href="tel:{{ site.phone_link }}" class="text-decoration-none text-dark">{{ site.phone }}</a>
         </p>
         <p class="mb-0 d-flex align-items-center text-muted">
           <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10 text-success me-2" style="width:32px;height:32px;" aria-hidden="true">
             <i class="bi bi-envelope"></i>
           </span>
-          <a href="mailto:info@kplonline.org" class="text-decoration-none text-dark">info@kplonline.org</a>
+          <a href="mailto:{{ site.email }}" class="text-decoration-none text-dark">{{ site.email }}</a>
         </p>
       </div>
 
@@ -43,11 +45,11 @@
         <h6 class="footer-heading">Library Hours</h6>
         <div class="mb-3">
           <p class="text-muted mb-1 fw-medium">Monday – Friday</p>
-          <p class="fs-6 fw-bold mb-0">8:00 AM – 8:00 PM</p>
+          <p class="fs-6 fw-bold mb-0">{{ site.weekday_hours }}</p>
         </div>
         <div>
           <p class="text-muted mb-1 fw-medium">Saturday – Sunday</p>
-          <p class="fs-6 fw-bold mb-0">8:00 AM – 5:00 PM</p>
+          <p class="fs-6 fw-bold mb-0">{{ site.weekend_hours }}</p>
         </div>
       </div>
 
@@ -67,18 +69,26 @@
       <div class="col-12 col-md-6 col-lg-3">
         <h6 class="footer-heading">Connect</h6>
         <div class="d-flex align-items-center gap-3 mb-3">
-          <a href="https://twitter.com/kigalilibrary" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="X / Twitter">
+          {% if site.x_url %}
+          <a href="{{ site.x_url }}" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="X / Twitter">
             <i class="bi bi-twitter-x"></i>
           </a>
-          <a href="https://instagram.com/kigalipubliclibrary" target="_blank" rel="noopener noreferrer" class="social-icon-btn text-danger" aria-label="Instagram">
+          {% endif %}
+          {% if site.instagram_url %}
+          <a href="{{ site.instagram_url }}" target="_blank" rel="noopener noreferrer" class="social-icon-btn text-danger" aria-label="Instagram">
             <i class="bi bi-instagram"></i>
           </a>
-          <a href="https://facebook.com/kigalipubliclibrary" target="_blank" rel="noopener noreferrer" class="social-icon-btn text-primary" aria-label="Facebook">
+          {% endif %}
+          {% if site.facebook_url %}
+          <a href="{{ site.facebook_url }}" target="_blank" rel="noopener noreferrer" class="social-icon-btn text-primary" aria-label="Facebook">
             <i class="bi bi-facebook"></i>
           </a>
-          <a href="https://youtube.com/@kigalipubliclibrary" target="_blank" rel="noopener noreferrer" class="social-icon-btn text-danger" aria-label="YouTube">
+          {% endif %}
+          {% if site.youtube_url %}
+          <a href="{{ site.youtube_url }}" target="_blank" rel="noopener noreferrer" class="social-icon-btn text-danger" aria-label="YouTube">
             <i class="bi bi-youtube"></i>
           </a>
+          {% endif %}
         </div>
         <p class="text-muted small leading-relaxed">
           Follow Kigali Public Library for updates on programs, initiatives, and library services.

@@ -1,0 +1,7 @@
+{% if room.image %}
+  <img src="{{ room.image.url }}" alt="{{ room.name }}" class="space-card-img border-bottom" loading="lazy">
+{% else %}
+  <div class="space-card-media border-bottom d-flex align-items-center justify-content-center" aria-hidden="true">
+    <i class="bi bi-{{ icon }}"></i>
+  </div>
+{% endif %}

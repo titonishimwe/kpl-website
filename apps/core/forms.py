@@ -1,5 +1,5 @@
 from django import forms
-from .models import MembershipApplication, RoomReservation
+from .models import MembershipApplication, RoomReservation, Space
 
 
 class MembershipApplicationForm(forms.ModelForm):
@@ -44,6 +44,16 @@ class MembershipApplicationForm(forms.ModelForm):
 
 
 class RoomReservationForm(forms.ModelForm):
+    space_type = forms.ChoiceField(label="Space", widget=forms.Select(attrs={"class": "form-select"}))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Only spaces staff have marked as available in the dashboard can be booked.
+        groups = {label: [] for _, label in Space.CATEGORY_CHOICES}
+        for space in Space.objects.filter(is_active=True):
+            groups[space.get_category_display()].append((space.booking_label, space.booking_label))
+        self.fields["space_type"].choices = [("", "- Select a space -")] + [(g, opts) for g, opts in groups.items() if opts]
+
     class Meta:
         model = RoomReservation
         exclude = ["status", "created_at"]

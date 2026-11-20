@@ -11,7 +11,7 @@
     <p class="lead text-muted max-w-3xl mx-auto fs-4 leading-relaxed mb-3">
       Private discussion spaces designed for study groups, mentoring sessions, interviews, and collaborative work.
     </p>
-    <span class="badge bg-secondary text-dark text-uppercase tracking-wider px-3 py-2 fs-6">
+    <span class="badge bg-secondary text-dark text-uppercase tracking-wider px-3 py-2 fs-6 text-wrap">
       Capacity: 4 Participants per room
     </span>
   </div>
@@ -24,13 +24,12 @@
       {% for room in rooms %}
         <div class="col-12 col-md-4">
           <div class="card h-100 border rounded-4 overflow-hidden text-center shadow-sm">
-            <div class="bg-light p-4 border-bottom d-flex align-items-center justify-content-center" style="min-height: 140px;">
-              <span class="fs-1 text-primary"><i class="bi bi-chat-square-quote"></i></span>
-            </div>
+            {% include "core/_space_media.html" with icon="chat-square-text" %}
             <div class="card-body p-4">
-              <h3 class="fs-4 fw-bold mb-2">{{ room }}</h3>
+              <h3 class="fs-4 fw-bold mb-2">{{ room.name }}</h3>
               <div class="section-accent-line mb-3"></div>
-              <p class="text-muted small mb-0">Air-conditioned, equipped with whiteboards and high-speed Wi-Fi.</p>
+              <p class="text-muted small mb-0">{{ room.description }}</p>
+              {% include "core/_space_rates.html" %}
             </div>
           </div>
         </div>

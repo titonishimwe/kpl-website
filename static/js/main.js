@@ -7,6 +7,15 @@ document.addEventListener("DOMContentLoaded", function () {
   const header = document.querySelector(".kpl-header");
   const scrollSegmentBar = document.querySelector(".header-scroll-bar");
 
+  // Keep page content clear of the fixed header, whatever its height on this screen.
+  if (header) {
+    const setHeaderOffset = () => {
+      document.documentElement.style.setProperty("--kpl-header-h", header.offsetHeight + "px");
+    };
+    setHeaderOffset();
+    window.addEventListener("resize", setHeaderOffset);
+  }
+
   window.addEventListener("scroll", function () {
     if (window.scrollY > 40) {
       if (header) header.classList.add("scrolled");

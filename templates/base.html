@@ -30,6 +30,11 @@
 
   <!-- Main Content Wrapper -->
   <main>
+    {% if site.announcement %}
+      <div class="site-announcement" role="status">
+        <div class="container-xxl"><i class="bi bi-megaphone me-2" aria-hidden="true"></i>{{ site.announcement }}</div>
+      </div>
+    {% endif %}
     {% include "includes/messages.html" %}
     {% block content %}
     {% endblock %}

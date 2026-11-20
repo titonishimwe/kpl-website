@@ -21,6 +21,9 @@
       {% for event in events %}
         <div class="col-12 col-md-6 col-lg-4">
           <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+            {% if event.image %}
+              <img src="{{ event.image.url }}" alt="{{ event.title }}" class="w-100" style="aspect-ratio: 16 / 9; object-fit: cover;" loading="lazy">
+            {% endif %}
             <div class="bg-dark text-white p-4 d-flex justify-content-between align-items-center" style="background-color: var(--kpl-primary) !important;">
               <span class="badge bg-secondary text-dark text-uppercase tracking-wider">Event</span>
               <small class="text-white-50"><i class="bi bi-clock me-1"></i>{{ event.date_text }}</small>
@@ -36,6 +39,14 @@
                 Learn More <i class="bi bi-arrow-right ms-2"></i>
               </a>
             </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="col-12">
+          <div class="bg-white rounded-4 shadow-sm p-5 text-center">
+            <i class="bi bi-calendar-x fs-1 text-muted"></i>
+            <h2 class="fs-4 fw-bold mt-3">No upcoming events right now</h2>
+            <p class="text-muted mb-0">New programs are added regularly. Please check back soon.</p>
           </div>
         </div>
       {% endfor %}

@@ -1,0 +1,66 @@
+{% extends "dashboard/base.html" %}
+{% load dashboard_tags %}
+
+{% block title %}Reservation #{{ res.pk }}{% endblock %}
+{% block breadcrumbs %}<a href="{% url 'dashboard:reservations' %}" class="dash-crumb"><i class="bi bi-arrow-left me-1"></i>Reservations</a>{% endblock %}
+{% block heading %}{{ res.space_type }}{% endblock %}
+{% block subheading %}<p class="dash-subtitle">{{ res.reservation_date|date:"l j F Y" }} · {{ res.get_duration_display }} · {% status_badge res %}</p>{% endblock %}
+{% block actions %}
+  {% if res.status != "confirmed" %}
+    <form method="post" class="d-inline">{% csrf_token %}<button name="quick_status" value="confirmed" class="btn btn-success"><i class="bi bi-check-lg me-1"></i>Confirm</button></form>
+  {% endif %}
+  {% if res.status != "cancelled" %}
+    <form method="post" class="d-inline" data-confirm="Cancel this reservation?">{% csrf_token %}<button name="quick_status" value="cancelled" class="btn btn-outline-danger"><i class="bi bi-x-lg me-1"></i>Cancel</button></form>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+{% if clashes %}
+  <div class="alert alert-warning d-flex gap-2">
+    <i class="bi bi-exclamation-triangle"></i>
+    <div>
+      <strong>Possible double booking.</strong> {{ clashes|length }} other request{{ clashes|length|pluralize }} for this space on the same day:
+      {% for c in clashes %}<a href="{% url 'dashboard:reservation_detail' c.pk %}" class="alert-link">{{ c.name }} ({{ c.get_status_display|lower }})</a>{% if not forloop.last %}, {% endif %}{% endfor %}.
+    </div>
+  </div>
+{% endif %}
+
+<div class="row g-3">
+  <div class="col-12 col-xl-8">
+    <div class="dash-card mb-3">
+      <h2 class="dash-card-title mb-3">Booking</h2>
+      <dl class="detail-grid">
+        <div><dt>Space</dt><dd>{{ res.space_type }}</dd></div>
+        <div><dt>Date</dt><dd>{{ res.reservation_date|date:"l j F Y" }}</dd></div>
+        <div><dt>Duration</dt><dd>{{ res.get_duration_display }}</dd></div>
+        <div><dt>Expected attendees</dt><dd>{{ res.attendees_count }}</dd></div>
+        <div class="span-2"><dt>Purpose</dt><dd class="text-pre">{{ res.purpose }}</dd></div>
+      </dl>
+    </div>
+    <div class="dash-card">
+      <h2 class="dash-card-title mb-3">Contact</h2>
+      <dl class="detail-grid">
+        <div><dt>Name</dt><dd>{{ res.name }}</dd></div>
+        <div><dt>Organization</dt><dd>{{ res.organization|default:"—" }}</dd></div>
+        <div><dt>Phone</dt><dd><a href="tel:{{ res.phone }}">{{ res.phone }}</a></dd></div>
+        <div><dt>Email</dt><dd><a href="mailto:{{ res.email }}">{{ res.email }}</a></dd></div>
+        <div><dt>Requested on</dt><dd>{{ res.created_at|date:"j M Y, H:i" }}</dd></div>
+      </dl>
+    </div>
+  </div>
+  <div class="col-12 col-xl-4">
+    <div class="dash-card">
+      <h2 class="dash-card-title mb-3">Review</h2>
+      <form method="post">
+        {% csrf_token %}
+        {% include "dashboard/_field.html" with field=form.status %}
+        {% include "dashboard/_field.html" with field=form.staff_notes %}
+        <button type="submit" class="btn btn-dark w-100">Save review</button>
+      </form>
+      {% if res.reviewed_at %}
+        <p class="small text-muted mt-3 mb-0"><i class="bi bi-clock-history me-1"></i>Last reviewed {{ res.reviewed_at|date:"j M Y, H:i" }}{% if res.reviewed_by %} by {{ res.reviewed_by.get_full_name|default:res.reviewed_by.username }}{% endif %}</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

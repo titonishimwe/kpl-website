@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
-from .models import MembershipApplication, RoomReservation, Event, BookArrival
+from .models import MembershipApplication, RoomReservation, Event, StaffPick, ImpactStat, Space
 
 
 class HomePageTest(TestCase):
@@ -9,6 +9,27 @@ class HomePageTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Kigali Public Library")
         self.assertContains(response, "Catalog")
+        self.assertContains(response, "Staff Picks")
+        self.assertContains(response, "Explore Our Library")
+        self.assertNotContains(response, "New Arrivals")
+
+    def test_staff_picks_show_active_picks_only(self):
+        StaffPick.objects.create(title="Shown Book", author="A. Writer", note="A team favourite.", recommended_by="Aline")
+        StaffPick.objects.create(title="Retired Book", is_active=False)
+        response = self.client.get(reverse("core:home"))
+        self.assertContains(response, "Shown Book")
+        self.assertContains(response, "A team favourite.")
+        self.assertNotContains(response, "Retired Book")
+        # Sample covers are replaced once real picks exist.
+        self.assertNotContains(response, "Rich Dad Poor Dad")
+
+    def test_impact_section_hidden_until_stats_added(self):
+        response = self.client.get(reverse("core:home"))
+        self.assertNotContains(response, "Serving Our Community")
+        ImpactStat.objects.create(value="12,345", label="Library visitors")
+        response = self.client.get(reverse("core:home"))
+        self.assertContains(response, "Serving Our Community")
+        self.assertContains(response, "12,345")
 
     def test_about_page_loads(self):
         response = self.client.get(reverse("core:about"))
@@ -59,7 +80,7 @@ class HomePageTest(TestCase):
             "email": "marie@example.com",
             "phone": "+250788654321",
             "organization": "Reading Rwanda",
-            "space_type": "Small Meeting Room (4-10 participants)",
+            "space_type": Space.objects.get(name="Small Meeting Room").booking_label,
             "reservation_date": "2026-11-20",
             "duration": "half_day",
             "attendees_count": 6,
@@ -68,3 +89,11 @@ class HomePageTest(TestCase):
         response = self.client.post(reverse("core:reserve_room"), data, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(RoomReservation.objects.filter(email="marie@example.com").exists())
+
+    def test_reservation_rejects_inactive_space(self):
+        space = Space.objects.get(name="Small Meeting Room")
+        space.is_active = False
+        space.save()
+        response = self.client.get(reverse("core:reserve_room"))
+        self.assertNotContains(response, space.booking_label)
+        self.assertContains(response, "Grey Discussion Room")

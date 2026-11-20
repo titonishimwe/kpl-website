@@ -1,0 +1,80 @@
+{% extends "dashboard/base.html" %}
+{% load dashboard_tags %}
+
+{% block title %}Staff & users{% endblock %}
+{% block breadcrumbs %}<span class="dash-crumb">Settings</span>{% endblock %}
+{% block heading %}Staff &amp; users{% endblock %}
+{% block subheading %}<p class="dash-subtitle">Give colleagues dashboard access, or remove it when they leave. Only administrators see this page.</p>{% endblock %}
+{% block actions %}
+  <button class="btn btn-dark" type="button" data-bs-toggle="collapse" data-bs-target="#newStaff" aria-expanded="{% if show_form %}true{% else %}false{% endif %}"><i class="bi bi-person-plus me-1"></i>Add staff account</button>
+{% endblock %}
+
+{% block content %}
+<div class="collapse {% if show_form %}show{% endif %} mb-3" id="newStaff">
+  <form method="post" class="dash-card" novalidate>
+    {% csrf_token %}
+    <h2 class="dash-card-title mb-3">New staff account</h2>
+    <div class="row">
+      {% for field in form %}
+        <div class="col-12 col-md-6">{% include "dashboard/_field.html" %}</div>
+      {% endfor %}
+    </div>
+    <div class="form-actions"><button type="submit" class="btn btn-dark">Create account</button></div>
+  </form>
+</div>
+
+<ul class="nav dash-tabs mb-3">
+  <li class="nav-item"><a class="nav-link {% if request.GET.role != 'staff' %}active{% endif %}" href="{% query_with role=None page=None %}">Everyone</a></li>
+  <li class="nav-item"><a class="nav-link {% if request.GET.role == 'staff' %}active{% endif %}" href="{% query_with role='staff' page=None %}">Staff only</a></li>
+</ul>
+
+<div class="dash-card">
+  <form method="get" class="row g-2 mb-3">
+    {% if request.GET.role %}<input type="hidden" name="role" value="{{ request.GET.role }}">{% endif %}
+    <div class="col"><input type="search" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="Search by name, username or email" aria-label="Search users"></div>
+    <div class="col-auto"><button class="btn btn-dark" type="submit"><i class="bi bi-search"></i></button></div>
+  </form>
+  <div class="table-responsive">
+    <table class="table dash-table align-middle mb-0">
+      <thead>
+        <tr><th>User</th><th class="d-none d-md-table-cell">Role</th><th class="d-none d-lg-table-cell">Last login</th><th class="text-end">Access</th></tr>
+      </thead>
+      <tbody>
+        {% for u in page %}
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <span class="dash-avatar">{{ u.first_name|default:u.username|first|upper }}</span>
+                <div>
+                  <div class="fw-semibold">{{ u.get_full_name|default:u.username }}{% if u == user %} <span class="text-muted small">(you)</span>{% endif %}</div>
+                  <div class="small text-muted">{{ u.username }}{% if u.email %} · {{ u.email }}{% endif %}</div>
+                </div>
+              </div>
+            </td>
+            <td class="d-none d-md-table-cell">
+              {% if u.is_superuser %}<span class="badge rounded-pill text-bg-dark">Administrator</span>
+              {% elif u.is_staff %}<span class="badge rounded-pill bg-success-subtle text-success-emphasis">Staff</span>
+              {% else %}<span class="badge rounded-pill text-bg-light border text-secondary">Website user</span>{% endif %}
+              {% if not u.is_active %}<span class="badge rounded-pill bg-danger-subtle text-danger-emphasis">Disabled</span>{% endif %}
+            </td>
+            <td class="d-none d-lg-table-cell small text-muted">{{ u.last_login|date:"j M Y, H:i"|default:"Never" }}</td>
+            <td class="text-end text-nowrap">
+              {% if u != user and not u.is_superuser %}
+                <form method="post" action="{% url 'dashboard:user_toggle' u.pk 'staff' %}" class="d-inline">
+                  {% csrf_token %}
+                  <button class="btn btn-sm {% if u.is_staff %}btn-outline-secondary{% else %}btn-outline-success{% endif %}">{% if u.is_staff %}Remove dashboard{% else %}Make staff{% endif %}</button>
+                </form>
+                <form method="post" action="{% url 'dashboard:user_toggle' u.pk 'active' %}" class="d-inline" {% if u.is_active %}data-confirm="Disable {{ u.username }}? They won’t be able to sign in."{% endif %}>
+                  {% csrf_token %}
+                  <button class="btn btn-sm {% if u.is_active %}btn-outline-danger{% else %}btn-outline-success{% endif %}" title="{% if u.is_active %}Disable account{% else %}Re-enable account{% endif %}" aria-label="{% if u.is_active %}Disable{% else %}Enable{% endif %} {{ u.username }}"><i class="bi {% if u.is_active %}bi-slash-circle{% else %}bi-check-circle{% endif %}"></i></button>
+                </form>
+              {% else %}<span class="small text-muted">—</span>{% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "dashboard/_pagination.html" %}
+</div>
+{% endblock %}

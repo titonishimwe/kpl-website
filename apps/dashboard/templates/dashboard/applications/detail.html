@@ -1,0 +1,86 @@
+{% extends "dashboard/base.html" %}
+{% load dashboard_tags %}
+
+{% block title %}{{ app.first_name }} {{ app.last_name }}{% endblock %}
+{% block breadcrumbs %}<a href="{% url 'dashboard:applications' %}" class="dash-crumb"><i class="bi bi-arrow-left me-1"></i>Membership applications</a>{% endblock %}
+{% block heading %}{{ app.first_name }} {{ app.last_name }}{% endblock %}
+{% block subheading %}<p class="dash-subtitle">Application #{{ app.pk }} · submitted {{ app.created_at|date:"j F Y, H:i" }} · {% status_badge app %}</p>{% endblock %}
+{% block actions %}
+  <a href="{% url 'dashboard:application_pdf' app.pk %}" class="btn btn-outline-dark" target="_blank"><i class="bi bi-printer me-1"></i>Print / PDF</a>
+  {% if app.status != "approved" %}
+    <form method="post" class="d-inline">{% csrf_token %}<button name="quick_status" value="approved" class="btn btn-success"><i class="bi bi-check-lg me-1"></i>Approve</button></form>
+  {% endif %}
+  {% if app.status != "rejected" %}
+    <form method="post" class="d-inline" data-confirm="Reject this application?">{% csrf_token %}<button name="quick_status" value="rejected" class="btn btn-outline-danger"><i class="bi bi-x-lg me-1"></i>Reject</button></form>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="row g-3">
+  <div class="col-12 col-xl-8">
+    <div class="dash-card mb-3">
+      <h2 class="dash-card-title mb-3">Applicant</h2>
+      <dl class="detail-grid">
+        <div><dt>Full name</dt><dd>{{ app.first_name }} {{ app.last_name }}</dd></div>
+        <div><dt>Date of birth</dt><dd>{{ app.dob|date:"j F Y" }} <span class="text-muted">({{ app.dob|timesince|cut:"," }} old)</span></dd></div>
+        <div><dt>Gender</dt><dd>{{ app.get_gender_display }}</dd></div>
+        <div><dt>National ID / Passport</dt><dd>{{ app.id_passport }}</dd></div>
+      </dl>
+    </div>
+
+    <div class="dash-card mb-3">
+      <h2 class="dash-card-title mb-3">Contact &amp; address</h2>
+      <dl class="detail-grid">
+        <div><dt>Phone</dt><dd><a href="tel:{{ app.phone }}">{{ app.phone }}</a></dd></div>
+        <div><dt>Alternative phone</dt><dd>{{ app.alt_phone|default:"—" }}</dd></div>
+        <div><dt>Email</dt><dd><a href="mailto:{{ app.email }}">{{ app.email }}</a></dd></div>
+        <div><dt>Alternative email</dt><dd>{{ app.alt_email|default:"—" }}</dd></div>
+        <div><dt>Village</dt><dd>{{ app.village|default:"—" }}</dd></div>
+        <div><dt>Sector</dt><dd>{{ app.sector|default:"—" }}</dd></div>
+        <div><dt>District</dt><dd>{{ app.district|default:"—" }}</dd></div>
+        <div><dt>Province</dt><dd>{{ app.province|default:"—" }}</dd></div>
+      </dl>
+    </div>
+
+    {% if app.guardian_name %}
+    <div class="dash-card mb-3">
+      <h2 class="dash-card-title mb-3">Parent / guardian</h2>
+      <dl class="detail-grid">
+        <div><dt>Name</dt><dd>{{ app.guardian_name }}</dd></div>
+        <div><dt>Relationship</dt><dd>{{ app.guardian_relationship|default:"—" }}</dd></div>
+        <div><dt>ID</dt><dd>{{ app.guardian_id|default:"—" }}</dd></div>
+        <div><dt>Phone</dt><dd>{{ app.guardian_phone|default:"—" }}</dd></div>
+      </dl>
+    </div>
+    {% endif %}
+
+    <div class="dash-card">
+      <h2 class="dash-card-title mb-3">Membership</h2>
+      <dl class="detail-grid">
+        <div><dt>Membership type</dt><dd>{{ app.get_membership_type_display }}</dd></div>
+        <div><dt>Payment method</dt><dd>{{ app.get_payment_method_display }}</dd></div>
+        <div class="span-2"><dt>Supporting document</dt><dd>
+          {% if app.document %}
+            <a href="{{ app.document.url }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-dark"><i class="bi bi-paperclip me-1"></i>Open document</a>
+          {% else %}<span class="text-muted">None uploaded</span>{% endif %}
+        </dd></div>
+      </dl>
+    </div>
+  </div>
+
+  <div class="col-12 col-xl-4">
+    <div class="dash-card mb-3">
+      <h2 class="dash-card-title mb-3">Review</h2>
+      <form method="post">
+        {% csrf_token %}
+        {% include "dashboard/_field.html" with field=form.status %}
+        {% include "dashboard/_field.html" with field=form.staff_notes %}
+        <button type="submit" class="btn btn-dark w-100">Save review</button>
+      </form>
+      {% if app.reviewed_at %}
+        <p class="small text-muted mt-3 mb-0"><i class="bi bi-clock-history me-1"></i>Last reviewed {{ app.reviewed_at|date:"j M Y, H:i" }}{% if app.reviewed_by %} by {{ app.reviewed_by.get_full_name|default:app.reviewed_by.username }}{% endif %}</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

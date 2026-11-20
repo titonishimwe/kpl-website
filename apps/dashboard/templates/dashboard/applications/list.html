@@ -1,0 +1,105 @@
+{% extends "dashboard/base.html" %}
+{% load dashboard_tags %}
+
+{% block title %}Membership applications{% endblock %}
+{% block breadcrumbs %}<span class="dash-crumb">Requests</span>{% endblock %}
+{% block heading %}Membership applications{% endblock %}
+{% block subheading %}<p class="dash-subtitle">{{ total }} result{{ total|pluralize }} · {{ filter_summary }}</p>{% endblock %}
+{% block actions %}
+  <a href="{% url 'dashboard:applications_csv' %}{% query_with page=None %}" class="btn btn-outline-dark"><i class="bi bi-filetype-csv me-1"></i>Export CSV</a>
+  <a href="{% url 'dashboard:applications_report' %}{% query_with page=None %}" class="btn btn-dark" target="_blank"><i class="bi bi-file-earmark-pdf me-1"></i>PDF report</a>
+{% endblock %}
+
+{% block content %}
+<!-- Status tabs -->
+<ul class="nav dash-tabs mb-3">
+  <li class="nav-item"><a class="nav-link {% if not request.GET.status %}active{% endif %}" href="{% query_with status=None page=None %}">All</a></li>
+  {% for value, label in status_choices %}
+    <li class="nav-item"><a class="nav-link {% if request.GET.status == value %}active{% endif %}" href="{% query_with status=value page=None %}">{{ label }}</a></li>
+  {% endfor %}
+</ul>
+
+<div class="dash-card">
+  <form method="get" class="row g-2 align-items-end mb-3 filter-bar">
+    {% if request.GET.status %}<input type="hidden" name="status" value="{{ request.GET.status }}">{% endif %}
+    <div class="col-12 col-md-4">
+      <label class="form-label small" for="q">Search</label>
+      <input type="search" name="q" id="q" value="{{ request.GET.q }}" class="form-control" placeholder="Name, email, phone or ID">
+    </div>
+    <div class="col-12 col-sm-6 col-md-3">
+      <label class="form-label small" for="type">Membership type</label>
+      <select name="type" id="type" class="form-select">
+        <option value="">All types</option>
+        {% for value, label in type_choices %}<option value="{{ value }}" {% if request.GET.type == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-6 col-sm-3 col-md-2">
+      <label class="form-label small" for="from">Submitted from</label>
+      <input type="date" name="from" id="from" value="{{ request.GET.from }}" class="form-control">
+    </div>
+    <div class="col-6 col-sm-3 col-md-2">
+      <label class="form-label small" for="to">to</label>
+      <input type="date" name="to" id="to" value="{{ request.GET.to }}" class="form-control">
+    </div>
+    <div class="col-12 col-md-1 d-flex gap-2">
+      <button class="btn btn-dark flex-grow-1" type="submit" aria-label="Apply filters"><i class="bi bi-funnel"></i></button>
+    </div>
+    {% if request.GET.q or request.GET.type or request.GET.from or request.GET.to %}
+      <div class="col-12"><a href="{% url 'dashboard:applications' %}{% if request.GET.status %}?status={{ request.GET.status }}{% endif %}" class="small">Clear filters</a></div>
+    {% endif %}
+  </form>
+
+  {% if page.object_list %}
+  <form method="post">
+    {% csrf_token %}
+    <div class="bulk-bar">
+      <span class="small text-muted">With selected:</span>
+      <select name="bulk_status" class="form-select form-select-sm w-auto" aria-label="Bulk action">
+        <option value="">Choose action…</option>
+        <option value="approved">Approve</option>
+        <option value="rejected">Reject</option>
+        <option value="pending">Mark as pending</option>
+      </select>
+      <button class="btn btn-sm btn-outline-dark" type="submit">Apply</button>
+    </div>
+    <div class="table-responsive">
+      <table class="table dash-table align-middle mb-0">
+        <thead>
+          <tr>
+            <th class="check-col"><input type="checkbox" class="form-check-input" data-select-all=".row-check" aria-label="Select all"></th>
+            <th>Applicant</th>
+            <th class="d-none d-md-table-cell">Membership</th>
+            <th class="d-none d-lg-table-cell">Contact</th>
+            <th class="d-none d-sm-table-cell">Submitted</th>
+            <th>Status</th>
+            <th class="text-end"><span class="visually-hidden">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in page %}
+            <tr>
+              <td class="check-col"><input type="checkbox" class="form-check-input row-check" name="selected" value="{{ a.pk }}" aria-label="Select {{ a.first_name }} {{ a.last_name }}"></td>
+              <td>
+                <a href="{% url 'dashboard:application_detail' a.pk %}" class="fw-semibold text-dark text-decoration-none">{{ a.first_name }} {{ a.last_name }}</a>
+                <div class="small text-muted d-md-none">{{ a.get_membership_type_display }}</div>
+              </td>
+              <td class="d-none d-md-table-cell small">{{ a.get_membership_type_display }}</td>
+              <td class="d-none d-lg-table-cell small">{{ a.phone }}<div class="text-muted">{{ a.email }}</div></td>
+              <td class="d-none d-sm-table-cell small text-nowrap">{{ a.created_at|date:"d M Y" }}</td>
+              <td>{% status_badge a %}</td>
+              <td class="text-end text-nowrap">
+                <a href="{% url 'dashboard:application_pdf' a.pk %}" class="btn btn-sm btn-light" target="_blank" title="Printable PDF" aria-label="PDF for {{ a.first_name }}"><i class="bi bi-printer"></i></a>
+                <a href="{% url 'dashboard:application_detail' a.pk %}" class="btn btn-sm btn-light" title="Open" aria-label="Open application from {{ a.first_name }}"><i class="bi bi-chevron-right"></i></a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </form>
+  {% include "dashboard/_pagination.html" %}
+  {% else %}
+    <div class="empty-state"><i class="bi bi-inbox"></i><p class="mb-0">No applications match these filters.</p></div>
+  {% endif %}
+</div>
+{% endblock %}

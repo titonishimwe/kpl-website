@@ -43,8 +43,9 @@ services:
       # Render asks for this when the Blueprint is created. It is not stored in git.
       - key: DEFAULT_ADMIN_PASSWORD
         sync: false
-      # Set to "true" in the Render Dashboard for one deploy to overwrite the
-      # admin's password with DEFAULT_ADMIN_PASSWORD, then set it back to "false".
+      # Deploys never change an existing admin's username, email or password.
+      # Only for a forgotten password: set this to "true" for ONE deploy to
+      # overwrite it with DEFAULT_ADMIN_PASSWORD, then set it back to "false".
       - key: DEFAULT_ADMIN_RESET_PASSWORD
         sync: false
 

@@ -1,0 +1,75 @@
+{% extends "dashboard/base.html" %}
+{% load dashboard_tags %}
+
+{% block title %}{{ res.title }}{% endblock %}
+{% block breadcrumbs %}<span class="dash-crumb">Website content</span>{% endblock %}
+{% block heading %}{{ res.title }}{% endblock %}
+{% block subheading %}{% if res.help %}<p class="dash-subtitle">{{ res.help }}</p>{% endif %}{% endblock %}
+{% block actions %}
+  {% if res.public_url %}<a href="{{ res.public_url }}" target="_blank" rel="noopener" class="btn btn-outline-dark"><i class="bi bi-eye me-1"></i>View on site</a>{% endif %}
+  <a href="{% url 'dashboard:resource_add' res.slug %}" class="btn btn-dark"><i class="bi bi-plus-lg me-1"></i>Add {{ res.singular }}</a>
+{% endblock %}
+
+{% block content %}
+<div class="dash-card">
+  {% if res.search or res.filters %}
+  <form method="get" class="row g-2 align-items-end mb-3 filter-bar">
+    {% if res.search %}
+      <div class="col-12 col-md">
+        <label class="form-label small" for="q">Search</label>
+        <input type="search" name="q" id="q" value="{{ request.GET.q }}" class="form-control" placeholder="Search {{ res.title|lower }}">
+      </div>
+    {% endif %}
+    {% for f in res.filters %}
+      <div class="col-6 col-md-3">
+        <label class="form-label small" for="f-{{ f }}">{{ res.model|field_label:f }}</label>
+        <select name="{{ f }}" id="f-{{ f }}" class="form-select">
+          <option value="">All</option>
+          {% for value, label in res.model|field_choices:f %}
+            <option value="{{ value }}" {% if active_filters|get_item:f == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    {% endfor %}
+    <div class="col-12 col-md-auto"><button class="btn btn-dark w-100" type="submit"><i class="bi bi-funnel me-1"></i>Filter</button></div>
+  </form>
+  {% endif %}
+
+  {% if page.object_list %}
+    <div class="table-responsive">
+      <table class="table dash-table align-middle mb-0">
+        <thead>
+          <tr>
+            {% for attr, heading in res.columns %}<th {% if forloop.counter > 2 %}class="d-none d-md-table-cell"{% endif %}>{{ heading }}</th>{% endfor %}
+            <th class="text-end"><span class="visually-hidden">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for obj in page %}
+            <tr>
+              {% for attr, heading in res.columns %}
+                <td {% if forloop.counter > 2 %}class="d-none d-md-table-cell small"{% endif %}>
+                  {% if forloop.first and heading or forloop.counter == 2 and not res.columns.0.1 %}
+                    <a href="{% url 'dashboard:resource_edit' res.slug obj.pk %}" class="fw-semibold text-dark text-decoration-none">{% cell obj attr %}</a>
+                  {% else %}{% cell obj attr %}{% endif %}
+                </td>
+              {% endfor %}
+              <td class="text-end text-nowrap">
+                <a href="{% url 'dashboard:resource_edit' res.slug obj.pk %}" class="btn btn-sm btn-light" title="Edit" aria-label="Edit {{ obj }}"><i class="bi bi-pencil"></i></a>
+                <a href="{% url 'dashboard:resource_delete' res.slug obj.pk %}" class="btn btn-sm btn-light text-danger" title="Delete" aria-label="Delete {{ obj }}"><i class="bi bi-trash"></i></a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% include "dashboard/_pagination.html" %}
+  {% else %}
+    <div class="empty-state">
+      <i class="bi bi-{{ res.icon }}"></i>
+      <p>{% if request.GET %}Nothing matches these filters.{% else %}No {{ res.title|lower }} yet.{% endif %}</p>
+      <a href="{% url 'dashboard:resource_add' res.slug %}" class="btn btn-dark btn-sm"><i class="bi bi-plus-lg me-1"></i>Add the first {{ res.singular }}</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

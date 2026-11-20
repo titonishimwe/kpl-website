@@ -1,0 +1,16 @@
+{% if field.is_hidden %}{{ field }}{% else %}
+<div class="mb-3 {% if field.field.widget.input_type == 'checkbox' %}form-check form-switch{% endif %}">
+  {% if field.field.widget.input_type == 'checkbox' %}
+    {{ field }}
+    <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+  {% else %}
+    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span class="text-danger" aria-hidden="true">*</span>{% endif %}</label>
+    {% if field.field.widget.input_type == 'file' and field.value.url %}
+      <div class="mb-2"><img src="{{ field.value.url }}" alt="Current image" class="current-image"></div>
+    {% endif %}
+    {{ field }}
+  {% endif %}
+  {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+  {% for error in field.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+</div>
+{% endif %}

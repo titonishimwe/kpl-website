@@ -1,12 +1,15 @@
+from django.utils import timezone
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .models import MembershipApplication, RoomReservation, Event, BookArrival
+from .models import MembershipApplication, RoomReservation, Event, StaffPick, ImpactStat, HomeSlide, Space
 from .forms import MembershipApplicationForm, RoomReservationForm
 
 
 def home(request):
-    events = Event.objects.filter(is_featured=True)
-    if not events.exists():
+    today = timezone.localdate()
+    upcoming = Event.objects.filter(event_date__gte=today)
+    events = list(upcoming.filter(is_featured=True)[:4]) or list(upcoming[:4])
+    if not events and not Event.objects.exists():
         events = [
             {
                 "title": "Storytime",
@@ -34,36 +37,59 @@ def home(request):
             },
         ]
 
-    # Sample books fallback
-    default_books = [
-        {"title": "A Thousand Splendid Suns", "cover": "images/covers/athousand.jpg"},
-        {"title": "Jacaranda", "cover": "images/covers/jacaranda.jpg"},
-        {"title": "Dream Count", "cover": "images/covers/dreamcount.webp"},
-        {"title": "The Richest Man in Babylon", "cover": "images/covers/richestman.jpeg"},
-        {"title": "Rich Dad Poor Dad", "cover": "images/covers/richdad.jpg"},
-    ]
-
-    adult_books = list(BookArrival.objects.filter(category="adult"))
-    if not adult_books:
-        adult_books = default_books
-
-    teen_books = list(BookArrival.objects.filter(category="teens"))
-    if not teen_books:
-        teen_books = [
-            {"title": "Diary of a Wimpy Kid", "cover": "images/covers/wimpykid.jpg"},
-            {"title": "The Odyssey", "cover": "images/covers/odyssey.jpg"},
-            {"title": "A Thousand Splendid Suns", "cover": "images/covers/athousand.jpg"},
-            {"title": "Dream Count", "cover": "images/covers/dreamcount.webp"},
-        ]
-
-    kid_books = list(BookArrival.objects.filter(category="kids"))
-    if not kid_books:
-        kid_books = [
-            {"title": "Sulwe", "cover": "images/covers/sulwe.jpeg"},
-            {"title": "Diary of a Wimpy Kid", "cover": "images/covers/wimpykid.jpg"},
+    # Staff Picks: books recommended by the KPL team, refreshed every two weeks.
+    # The sample covers below show until staff add picks in the admin.
+    picks = list(StaffPick.objects.filter(is_active=True))
+    sample_picks = {
+        "adult": [
+            {"title": "A Thousand Splendid Suns", "author": "Khaled Hosseini", "cover": "images/covers/athousand.jpg"},
+            {"title": "Jacaranda", "author": "Gaël Faye", "cover": "images/covers/jacaranda.jpg"},
+            {"title": "Dream Count", "author": "Chimamanda Ngozi Adichie", "cover": "images/covers/dreamcount.webp"},
+            {"title": "The Richest Man in Babylon", "author": "George S. Clason", "cover": "images/covers/richestman.jpeg"},
+            {"title": "Rich Dad Poor Dad", "author": "Robert T. Kiyosaki", "cover": "images/covers/richdad.jpg"},
+        ],
+        "teens": [
+            {"title": "Diary of a Wimpy Kid", "author": "Jeff Kinney", "cover": "images/covers/wimpykid.jpg"},
+            {"title": "The Odyssey", "author": "Homer", "cover": "images/covers/odyssey.jpg"},
+        ],
+        "kids": [
+            {"title": "Sulwe", "author": "Lupita Nyong'o", "cover": "images/covers/sulwe.jpeg"},
             {"title": "Dock", "cover": "images/covers/dock.jpeg"},
-            {"title": "Jacaranda", "cover": "images/covers/jacaranda.jpg"},
-        ]
+        ],
+    }
+    pick_tabs = []
+    for key, label in StaffPick.CATEGORY_CHOICES:
+        books = [p for p in picks if p.category == key] if picks else sample_picks[key]
+        if books:
+            pick_tabs.append({"key": key, "label": label, "books": books})
+    picks_updated = max((p.added_on for p in picks), default=None)
+
+    impact_stats = list(ImpactStat.objects.filter(is_active=True))
+
+    discover_links = [
+        {
+            "href": "/spaces/",
+            "icon": "door-open",
+            "title": "Spaces & Services",
+            "text": "Meeting rooms, discussion rooms and event venues for study, work and community gatherings.",
+            "cta": "Explore spaces",
+        },
+        {
+            "href": "/membership/",
+            "icon": "person-vcard",
+            "title": "Membership",
+            "text": "Get a library card to borrow books, use the internet café and join our programs.",
+            "cta": "Become a member",
+        },
+        {
+            "href": "https://kplonline.overdrive.com/",
+            "icon": "laptop",
+            "title": "Library Resources",
+            "text": "Borrow e-books and audiobooks from our digital library, or search the physical catalog.",
+            "cta": "Browse resources",
+            "external": True,
+        },
+    ]
 
     quick_links = [
         {
@@ -92,16 +118,19 @@ def home(request):
         },
     ]
 
-    carousel_slides = [
-        {"image": "images/events/jacaranda.png", "alt": "Jacaranda Event", "title": "Jacaranda Cultural Night"},
-        {"image": "images/bg/firstlady.jpg", "alt": "First Lady Event", "title": "First Lady Community Session"},
+    carousel_slides = list(HomeSlide.objects.filter(is_active=True)) or [
+        {"image": "images/events/jacaranda.png", "title": "Jacaranda Cultural Night",
+         "caption": "Join us in celebrating community reading and learning."},
+        {"image": "images/bg/firstlady.jpg", "title": "First Lady Community Session",
+         "caption": "Join us in celebrating community reading and learning."},
     ]
 
     context = {
         "events": events,
-        "adult_books": adult_books,
-        "teen_books": teen_books,
-        "kid_books": kid_books,
+        "pick_tabs": pick_tabs,
+        "picks_updated": picks_updated,
+        "impact_stats": impact_stats,
+        "discover_links": discover_links,
         "quick_links": quick_links,
         "carousel_slides": carousel_slides,
     }
@@ -170,17 +199,20 @@ def privacy(request):
 def spaces_overview(request):
     spaces = [
         {
-            "title": "MEETING ROOMS",
+            "title": "Meeting Rooms",
+            "icon": "people",
             "url": "core:meeting_rooms",
             "description": "Flexible spaces designed for meetings, discussions, workshops, training sessions, and professional engagements.",
         },
         {
-            "title": "DISCUSSION ROOMS",
+            "title": "Discussion Rooms",
+            "icon": "chat-square-text",
             "url": "core:discussion_rooms",
             "description": "Comfortable spaces for study groups, mentoring sessions, brainstorming meetings, and collaborative work.",
         },
         {
-            "title": "EVENT SPACES",
+            "title": "Space for Events",
+            "icon": "easel2",
             "url": "core:reserve_room",
             "description": "Versatile venues suitable for conferences, public talks, book launches, exhibitions, and community events.",
         },
@@ -189,28 +221,12 @@ def spaces_overview(request):
 
 
 def meeting_rooms(request):
-    rooms = [
-        {
-            "title": "Small Meeting Room",
-            "capacity": "4–10 Participants",
-            "description": "Suitable for interviews, consultations, private meetings, and focused discussions.",
-        },
-        {
-            "title": "Medium Meeting Room",
-            "capacity": "10–25 Participants",
-            "description": "Designed for workshops, training sessions, collaborative meetings, and professional engagements.",
-        },
-        {
-            "title": "Large Meeting Room",
-            "capacity": "25–50 Participants",
-            "description": "Ideal for presentations, stakeholder meetings, board sessions, and larger group discussions.",
-        },
-    ]
+    rooms = Space.objects.filter(category="meeting", is_active=True)
     return render(request, "core/meeting_rooms.html", {"rooms": rooms})
 
 
 def discussion_rooms(request):
-    rooms = ["Grey Room", "Blue Room", "Red Room"]
+    rooms = Space.objects.filter(category="discussion", is_active=True)
     uses = [
         "Study Groups",
         "Mentoring Sessions",
@@ -299,8 +315,8 @@ def membership(request):
 
 
 def events_view(request):
-    events = Event.objects.all()
-    if not events.exists():
+    events = Event.objects.filter(event_date__gte=timezone.localdate())
+    if not events.exists() and not Event.objects.exists():
         events = [
             {
                 "title": "Storytime",

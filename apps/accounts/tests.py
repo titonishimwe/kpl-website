@@ -71,7 +71,7 @@ class CreateDefaultAdminTest(TestCase):
         self.assertTrue(self.admin.is_active)
         self.assertTrue(self.admin.is_staff)
         self.assertTrue(self.admin.is_superuser)
-        self.assertEqual(self.admin.email, "new@example.com")
+        self.assertEqual(self.admin.email, "admin@example.com")
         self.assertTrue(self.admin.check_password("OldPass@2026#"))
 
     def test_creates_missing_superuser(self):
@@ -79,3 +79,22 @@ class CreateDefaultAdminTest(TestCase):
         david = User.objects.get(username="david")
         self.assertTrue(david.is_superuser)
         self.assertTrue(david.check_password("NewPass@2026#"))
+
+    def test_repeated_deploys_never_change_credentials(self):
+        """Each Render deploy runs this command; sign-in details must survive it."""
+        self.admin.set_password("ChangedInDashboard@1")
+        self.admin.save()
+        for _ in range(3):
+            self.run_command(DEFAULT_ADMIN_EMAIL="other@example.com", DEFAULT_ADMIN_PASSWORD="EnvPass@2026#")
+        self.assertEqual(self.admin.username, "admin")
+        self.assertEqual(self.admin.email, "admin@example.com")
+        self.assertTrue(self.admin.check_password("ChangedInDashboard@1"))
+
+    def test_reset_flag_with_matching_password_is_a_no_op(self):
+        self.run_command(DEFAULT_ADMIN_RESET_PASSWORD="true", DEFAULT_ADMIN_PASSWORD="OldPass@2026#")
+        self.assertTrue(self.admin.check_password("OldPass@2026#"))
+
+    def test_missing_email_is_filled(self):
+        User.objects.filter(pk=self.admin.pk).update(email="")
+        self.run_command(DEFAULT_ADMIN_EMAIL="filled@example.com")
+        self.assertEqual(self.admin.email, "filled@example.com")

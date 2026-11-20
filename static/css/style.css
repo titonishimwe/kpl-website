@@ -36,13 +36,25 @@
   --kpl-purple: #BD31BB;
   --kpl-open-green: #1f7a3e;
   --kpl-closed-red: #8b1e1e;
+  --kpl-header-h: 88px;
+}
+
+@media (min-width: 992px) {
+  :root {
+    --kpl-header-h: 130px;
+  }
+}
+
+html {
+  scroll-padding-top: calc(var(--kpl-header-h) + 16px);
 }
 
 body {
   font-family: 'DINPro', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   color: var(--kpl-primary);
   background-color: #ffffff;
-  padding-top: 130px; /* Offset for fixed top navbar */
+  /* Offset for the fixed header. main.js sets --kpl-header-h to its real height. */
+  padding-top: var(--kpl-header-h, 130px);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -205,30 +217,82 @@ main {
 /* ================= Hero Section ================= */
 .hero-section {
   position: relative;
-  min-height: 480px;
+  min-height: clamp(520px, 78vh, 720px);
   background-size: cover;
   background-position: center;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 3rem 0;
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(11, 20, 18, 0.35);
+  background: linear-gradient(180deg, rgba(11, 20, 18, 0.55) 0%, rgba(11, 20, 18, 0.45) 45%, rgba(11, 20, 18, 0.75) 100%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: #ffffff;
+}
+
+.hero-eyebrow {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--kpl-secondary);
+  margin-bottom: 0.75rem;
+}
+
+.hero-title {
+  font-size: clamp(2.25rem, 6vw, 4rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2.2vw, 1.25rem);
+  line-height: 1.6;
+  max-width: 40rem;
+  color: rgba(255, 255, 255, 0.88);
+  margin-bottom: 2rem;
 }
 
 .hero-search-bar-wrapper {
-  position: relative;
-  z-index: 2;
-  width: 90%;
+  width: 100%;
   max-width: 860px;
-  background: rgba(109, 205, 184, 0.55);
+  background: rgba(109, 205, 184, 0.35);
   backdrop-filter: blur(8px);
-  padding: 12px;
-  border-radius: 8px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+
+@media (max-width: 575.98px) {
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .hero-actions .btn {
+    width: 100%;
+  }
 }
 
 .btn-catalog {
@@ -353,9 +417,10 @@ main {
   transform: translateY(-2px);
 }
 
-/* ================= Book Cards ================= */
+/* ================= Book Cards (Staff Picks) ================= */
 .book-card {
   text-align: center;
+  height: 100%;
   transition: transform 0.3s ease;
 }
 
@@ -364,19 +429,63 @@ main {
 }
 
 .book-cover-img {
-  width: 150px;
-  height: 220px;
+  width: 100%;
+  max-width: 170px;
+  aspect-ratio: 2 / 3;
+  height: auto;
   object-fit: cover;
   border-radius: 6px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.85rem;
 }
 
 .book-title {
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.3;
   color: var(--kpl-primary);
+  margin: 0 0 0.2rem;
+}
+
+.book-author {
+  font-size: 0.875rem;
+  color: #6c757d;
   margin: 0;
+}
+
+.book-note {
+  font-size: 0.875rem;
+  font-style: italic;
+  line-height: 1.5;
+  color: #495057;
+  margin: 0.5rem 0 0;
+}
+
+.book-recommender {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--kpl-accent);
+  margin: 0.25rem 0 0;
+}
+
+.staff-picks-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  background-color: var(--kpl-primary);
+  color: #ffffff;
+  border-radius: 1rem;
+  padding: 1.75rem 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+@media (min-width: 768px) {
+  .staff-picks-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2.5rem 3rem;
+  }
 }
 
 /* ================= Event Cards ================= */
@@ -495,6 +604,10 @@ main {
 }
 
 /* Custom tabs styling */
+.nav-pills-kpl {
+  gap: 0.5rem;
+}
+
 .nav-pills-kpl .nav-link {
   border: 1px solid var(--kpl-primary);
   color: var(--kpl-primary);
@@ -503,7 +616,6 @@ main {
   font-weight: 600;
   text-transform: uppercase;
   padding: 0.5rem 1.4rem;
-  margin: 0 0.3rem;
   transition: all 0.25s ease;
 }
 
@@ -512,4 +624,289 @@ main {
   background-color: var(--kpl-secondary);
   border-color: var(--kpl-secondary);
   color: var(--kpl-primary);
+}
+
+/* =========================================================
+   Layout consistency
+   One spacing scale, one heading style and one text width,
+   shared by every page.
+   ========================================================= */
+
+/* Wider side padding on large screens so g-lg-5 rows no longer overflow
+   the viewport (they caused a sideways scroll on every page). */
+@media (min-width: 992px) {
+  .container-xxl {
+    --bs-gutter-x: 3rem;
+  }
+}
+
+/* Standard vertical rhythm for content sections. */
+.section {
+  padding-top: 3.5rem;
+  padding-bottom: 3.5rem;
+}
+
+@media (min-width: 992px) {
+  .section {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+  .py-lg-6 {
+    padding-top: 5rem !important;
+    padding-bottom: 5rem !important;
+  }
+}
+
+.section-heading {
+  margin-bottom: 2.5rem;
+}
+
+.section-eyebrow {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--kpl-accent);
+  margin-bottom: 0.5rem;
+}
+
+/* Section titles: .section-title and the display-6 headings used on inner pages
+   share one size so every page has the same heading scale. */
+.section-title,
+h2.display-6 {
+  font-size: calc(1.425rem + 1.2vw);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+
+.section-title {
+  margin-bottom: 0;
+}
+
+@media (min-width: 1200px) {
+  .section-title,
+  h2.display-6 {
+    font-size: 2.25rem;
+  }
+}
+
+.section-lead {
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: #6c757d;
+  max-width: 42rem;
+  margin-bottom: 0;
+}
+
+.card-title-kpl {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.text-secondary-kpl {
+  color: var(--kpl-secondary) !important;
+}
+
+/* Page intro text: one size on every page, comfortable on phones. */
+.lead.fs-4 {
+  font-size: 1.125rem !important;
+  line-height: 1.7;
+}
+
+@media (min-width: 768px) {
+  .lead.fs-4 {
+    font-size: 1.3rem !important;
+  }
+}
+
+/* Body paragraphs marked fs-5 (About, Careers, Spaces) share one size. */
+p.fs-5.leading-relaxed {
+  font-size: 1.0625rem !important;
+}
+
+@media (min-width: 768px) {
+  p.fs-5.leading-relaxed {
+    font-size: 1.125rem !important;
+  }
+}
+
+/* Utility classes used in the templates that Bootstrap does not provide. */
+.max-w-lg { max-width: 32rem; }
+.max-w-2xl { max-width: 42rem; }
+.max-w-3xl { max-width: 48rem; }
+.max-w-4xl { max-width: 56rem; }
+.leading-relaxed { line-height: 1.7; }
+.tracking-tight { letter-spacing: -0.015em; }
+.tracking-wide { letter-spacing: 0.04em; }
+.tracking-wider { letter-spacing: 0.08em; }
+.tracking-widest { letter-spacing: 0.18em; }
+.text-accent { color: var(--kpl-accent) !important; }
+.transition { transition: all 0.25s ease; }
+.hover-shadow:hover { box-shadow: 0 12px 30px rgba(11, 20, 18, 0.1) !important; transform: translateY(-3px); }
+.space-y-2 > * + * { margin-top: 0.5rem; }
+.space-y-3 > * + * { margin-top: 0.75rem; }
+
+@media (min-width: 768px) {
+  .w-md-auto { width: auto !important; }
+}
+
+/* Light outline button for dark backgrounds. */
+.btn-kpl-outline-light {
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  color: #ffffff;
+  border-radius: 50px;
+  padding: calc(0.8rem - 2px) 2rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.btn-kpl-outline-light:hover {
+  background-color: #ffffff;
+  color: var(--kpl-primary);
+}
+
+/* ================= Discover KPL ================= */
+.discover-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 2rem;
+  border: 1px solid var(--kpl-gray);
+  border-radius: 1rem;
+  background: #ffffff;
+  color: var(--kpl-primary);
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.discover-card:hover {
+  border-color: var(--kpl-secondary);
+  box-shadow: 0 12px 30px rgba(11, 20, 18, 0.08);
+  transform: translateY(-3px);
+  color: var(--kpl-primary);
+}
+
+.discover-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: rgba(109, 205, 184, 0.18);
+  color: var(--kpl-accent);
+  font-size: 1.6rem;
+  margin-bottom: 1.25rem;
+}
+
+.discover-link {
+  margin-top: auto;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--kpl-accent);
+}
+
+/* ================= Our Impact ================= */
+.impact-section {
+  background-color: var(--kpl-primary);
+  color: #ffffff;
+}
+
+.impact-section .section-eyebrow {
+  color: var(--kpl-secondary);
+}
+
+.impact-section .section-lead {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.impact-card {
+  height: 100%;
+  text-align: center;
+  padding: 1.75rem 1rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.impact-icon {
+  font-size: 1.75rem;
+  color: var(--kpl-secondary);
+}
+
+.impact-value {
+  font-size: clamp(1.75rem, 5vw, 2.75rem);
+  font-weight: 700;
+  line-height: 1.1;
+  margin: 0.5rem 0 0.4rem;
+}
+
+.impact-label {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ================= Events carousel ================= */
+.events-carousel-img {
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  background-color: var(--kpl-primary);
+}
+
+/* ================= Space cards ================= */
+.space-card-media {
+  min-height: 150px;
+  font-size: 2.75rem;
+  color: var(--kpl-accent);
+  background: var(--kpl-light-bg);
+}
+
+/* ================= Phones ================= */
+@media (max-width: 575.98px) {
+  .kpl-logo {
+    height: 44px;
+  }
+  .quick-action-card {
+    padding: 1rem 0.5rem;
+  }
+  .quick-action-icon {
+    width: 44px;
+    height: 44px;
+  }
+  .quick-action-title {
+    font-size: 0.85rem;
+  }
+  .event-item-title {
+    font-size: 1.1rem;
+  }
+  .discover-card {
+    padding: 1.5rem;
+  }
+  .cookie-banner-box {
+    padding: 1.5rem;
+  }
+}
+
+.space-card-img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+/* ================= Announcement bar ================= */
+.site-announcement {
+  background: var(--kpl-secondary);
+  color: var(--kpl-primary);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.6rem 0;
+  text-align: center;
 }

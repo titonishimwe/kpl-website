@@ -1,57 +1,63 @@
 from datetime import datetime
 import zoneinfo
 
-CLOSED_DATES = ["2025-01-01", "2025-07-04", "2026-01-01", "2026-07-04"]
+from django.db import DatabaseError
 
-LIBRARY_SCHEDULE = {
-    "weekday": {
-        "open": 8,
-        "close": 20,
-        "label": "8:00 AM – 8:00 PM",
-    },
-    "weekend": {
-        "open": 8,
-        "close": 17,
-        "label": "8:00 AM – 5:00 PM",
-    },
-}
+from .models import ClosedDay, SiteSettings
+
+
+def _format_time(t):
+    """08:00 -> '8:00 AM'."""
+    return t.strftime("%I:%M %p").lstrip("0")
+
+
+def _load_settings():
+    try:
+        return SiteSettings.load()
+    except DatabaseError:
+        # Tables not migrated yet (first deploy, management commands): fall back to defaults.
+        return SiteSettings()
+
+
+def site_settings(request):
+    """Contact details, hours and homepage content that staff edit in the dashboard."""
+    site = _load_settings()
+    site.weekday_hours = f"{_format_time(site.weekday_open)} – {_format_time(site.weekday_close)}"
+    site.weekend_hours = f"{_format_time(site.weekend_open)} – {_format_time(site.weekend_close)}"
+    return {"site": site}
 
 
 def library_status(request):
+    now = datetime.now(zoneinfo.ZoneInfo("Africa/Kigali"))
+    site = _load_settings()
+
     try:
-        kigali_tz = zoneinfo.ZoneInfo("Africa/Kigali")
-    except Exception:
-        kigali_tz = None
+        closed_today = ClosedDay.objects.filter(date=now.date()).first()
+    except DatabaseError:
+        closed_today = None
 
-    if kigali_tz:
-        now = datetime.now(kigali_tz)
-    else:
-        now = datetime.now()
-
-    date_str = now.strftime("%Y-%m-%d")
-
-    if date_str in CLOSED_DATES:
+    if closed_today:
         return {
             "library_status": {
                 "is_open": False,
-                "status": "Closed today",
+                "status": f"Closed today{': ' + closed_today.reason if closed_today.reason else ''}",
                 "hours": "Closed",
+                "current_year": now.year,
             }
         }
 
     # weekday(): Monday is 0, Sunday is 6
-    is_weekend = now.weekday() in (5, 6)
-    schedule = LIBRARY_SCHEDULE["weekend"] if is_weekend else LIBRARY_SCHEDULE["weekday"]
+    if now.weekday() in (5, 6):
+        open_t, close_t = site.weekend_open, site.weekend_close
+    else:
+        open_t, close_t = site.weekday_open, site.weekday_close
 
-    current_hour = now.hour
-    is_open = schedule["open"] <= current_hour < schedule["close"]
-    status_text = "We are currently open." if is_open else "We are currently closed."
-
+    is_open = open_t <= now.time() < close_t
     return {
         "library_status": {
             "is_open": is_open,
-            "status": status_text,
-            "hours": schedule["label"],
+            "status": "We are currently open." if is_open else "We are currently closed.",
+            "hours": f"{_format_time(open_t)} – {_format_time(close_t)}",
             "current_year": now.year,
         }
     }

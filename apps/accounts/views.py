@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import RegisterForm, UserUpdateForm, ProfileUpdateForm
@@ -17,9 +18,11 @@ def login_view(request):
             login(request, user)
             messages.success(request, f"Welcome back, {user.first_name or user.username}!")
             next_url = request.GET.get("next")
-            if next_url:
+            if next_url and url_has_allowed_host_and_scheme(
+                next_url, allowed_hosts={request.get_host()}, require_https=request.is_secure()
+            ):
                 return redirect(next_url)
-            return redirect("core:home")
+            return redirect("dashboard:home" if user.is_staff else "core:home")
         else:
             messages.error(request, "Invalid username or password.")
     else:

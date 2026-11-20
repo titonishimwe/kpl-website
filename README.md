@@ -166,7 +166,28 @@ python manage.py runserver
 
 Visit the application in your browser:
 - **Public Site**: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+- **Staff Dashboard**: [http://127.0.0.1:8000/dashboard/](http://127.0.0.1:8000/dashboard/)
 - **Django Administration**: [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/)
+
+---
+
+## Staff Dashboard
+
+`/dashboard/` is where library staff run the website. Any active user with **staff status** can use it; staff are sent there automatically after signing in.
+
+| Section | What staff can do |
+|---|---|
+| Overview | Applications to review, bookings to confirm, upcoming events, 12-month activity chart, membership-type and most-booked-space charts, and a "Needs attention" list |
+| Membership | Search and filter applications by status, type and date; approve or reject one or many at once; add internal notes; download a filtered **PDF report** or CSV; print a single application as a PDF for card issuance |
+| Reservations | Upcoming and past bookings, confirm or cancel, double-booking warning, PDF report |
+| Events | Add, edit and delete events; feature them on the homepage |
+| Spaces & Rooms | Rooms shown on the Meeting Rooms and Discussion Rooms pages and in the booking form, with capacity, photo and rates |
+| Staff Picks, Impact Figures, Homepage Slides | Homepage content |
+| Website Settings | Homepage cover photo and text, announcement bar, contact details, opening hours, social links |
+| Closure Days | Holidays and other dates the site shows the library as closed |
+| Staff & Users | (administrators only) Create staff accounts, grant or remove dashboard access, disable accounts |
+
+To add another editable content type, add a `Resource` entry in `apps/dashboard/resources.py`.
 
 ---
 
@@ -206,7 +227,7 @@ Render deploys from GitHub, GitLab, Bitbucket, or Cursor. Commit these files and
 
 The first build installs dependencies, runs `collectstatic`, applies migrations, and creates the admin user if that password is set. The site is then available at `https://kpl-website.onrender.com` (Render may append a suffix if that name is taken).
 
-Open `/admin/` and sign in with username `admin` and the password you set.
+Open `/dashboard/` and sign in with the `DEFAULT_ADMIN_USERNAME` account and the password you set.
 
 ### 3. Custom domain
 
@@ -219,7 +240,7 @@ The `onrender.com` hostname is added automatically.
 
 ### Uploaded files
 
-Membership documents, event images, and profile photos are stored in `media/` and served by the app. On the free web service that directory is wiped on every restart or redeploy. To keep uploads, change `plan` in `render.yaml` from `free` to a paid plan such as `0.5c-512mb` and uncomment the `disk` block. Persistent disks are not available on the free plan.
+Membership documents, event images, cover photos, room photos, book covers, slides and profile photos are stored in `media/` and served by the app. On the free web service that directory is wiped on every restart or redeploy. To keep uploads, change `plan` in `render.yaml` from `free` to a paid plan such as `0.5c-512mb` and uncomment the `disk` block. Persistent disks are not available on the free plan.
 
 ### Free-tier limits
 

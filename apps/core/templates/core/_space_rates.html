@@ -1,0 +1,6 @@
+{% if room.half_day_rate or room.full_day_rate %}
+  <p class="small text-muted mt-3 mb-0">
+    {% if room.half_day_rate %}<span class="me-3"><strong class="text-dark">Half day:</strong> {{ room.half_day_rate }}</span>{% endif %}
+    {% if room.full_day_rate %}<span><strong class="text-dark">Full day:</strong> {{ room.full_day_rate }}</span>{% endif %}
+  </p>
+{% endif %}

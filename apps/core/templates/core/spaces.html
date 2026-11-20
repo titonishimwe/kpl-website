@@ -22,8 +22,8 @@
       {% for space in spaces %}
         <div class="col-12 col-md-4">
           <div class="card h-100 border shadow-sm rounded-4 overflow-hidden hover-shadow transition">
-            <div class="bg-light p-5 text-center border-bottom d-flex align-items-center justify-content-center" style="min-height: 180px;">
-              <span class="text-uppercase tracking-widest text-muted fw-bold fs-5">{{ space.title }}</span>
+            <div class="space-card-media border-bottom d-flex align-items-center justify-content-center" aria-hidden="true">
+              <i class="bi bi-{{ space.icon }}"></i>
             </div>
             <div class="card-body p-4 d-flex flex-column justify-content-between">
               <div>

@@ -1,0 +1,74 @@
+{% extends "dashboard/base.html" %}
+{% load dashboard_tags %}
+
+{% block title %}Reservations{% endblock %}
+{% block breadcrumbs %}<span class="dash-crumb">Requests</span>{% endblock %}
+{% block heading %}Room &amp; space reservations{% endblock %}
+{% block subheading %}<p class="dash-subtitle">{{ total }} reservation{{ total|pluralize }}</p>{% endblock %}
+{% block actions %}
+  <a href="{% url 'dashboard:resource_list' 'spaces' %}" class="btn btn-outline-dark"><i class="bi bi-door-open me-1"></i>Manage spaces</a>
+  <a href="{% url 'dashboard:reservations_report' %}{% query_with page=None %}" class="btn btn-dark" target="_blank"><i class="bi bi-file-earmark-pdf me-1"></i>PDF report</a>
+{% endblock %}
+
+{% block content %}
+<ul class="nav dash-tabs mb-3">
+  <li class="nav-item"><a class="nav-link {% if when == 'upcoming' %}active{% endif %}" href="{% query_with when='upcoming' page=None %}">Upcoming</a></li>
+  <li class="nav-item"><a class="nav-link {% if when == 'past' %}active{% endif %}" href="{% query_with when='past' page=None %}">Past</a></li>
+  <li class="nav-item"><a class="nav-link {% if when == 'all' %}active{% endif %}" href="{% query_with when='all' page=None %}">All dates</a></li>
+</ul>
+
+<div class="dash-card">
+  <form method="get" class="row g-2 align-items-end mb-3 filter-bar">
+    <input type="hidden" name="when" value="{{ when }}">
+    <div class="col-12 col-md-6">
+      <label class="form-label small" for="q">Search</label>
+      <input type="search" name="q" id="q" value="{{ request.GET.q }}" class="form-control" placeholder="Name, organization, phone, email or space">
+    </div>
+    <div class="col-8 col-md-4">
+      <label class="form-label small" for="status">Status</label>
+      <select name="status" id="status" class="form-select">
+        <option value="">Any status</option>
+        {% for value, label in status_choices %}<option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="col-4 col-md-2"><button class="btn btn-dark w-100" type="submit"><i class="bi bi-funnel me-1"></i>Filter</button></div>
+  </form>
+
+  {% if page.object_list %}
+    <div class="table-responsive">
+      <table class="table dash-table align-middle mb-0">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Space</th>
+            <th class="d-none d-md-table-cell">Booked by</th>
+            <th class="d-none d-lg-table-cell">Duration</th>
+            <th class="d-none d-lg-table-cell">People</th>
+            <th>Status</th>
+            <th class="text-end"><span class="visually-hidden">Open</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in page %}
+            <tr>
+              <td class="text-nowrap"><span class="date-chip"><b>{{ r.reservation_date|date:"j" }}</b>{{ r.reservation_date|date:"M" }}</span><span class="small text-muted ms-2 d-none d-sm-inline">{{ r.reservation_date|date:"D" }}</span></td>
+              <td>
+                <a href="{% url 'dashboard:reservation_detail' r.pk %}" class="fw-semibold text-dark text-decoration-none">{{ r.space_type }}</a>
+                <div class="small text-muted d-md-none">{{ r.name }}</div>
+              </td>
+              <td class="d-none d-md-table-cell small">{{ r.name }}{% if r.organization %}<div class="text-muted">{{ r.organization }}</div>{% endif %}</td>
+              <td class="d-none d-lg-table-cell small">{{ r.get_duration_display }}</td>
+              <td class="d-none d-lg-table-cell small">{{ r.attendees_count }}</td>
+              <td>{% status_badge r %}</td>
+              <td class="text-end"><a href="{% url 'dashboard:reservation_detail' r.pk %}" class="btn btn-sm btn-light" aria-label="Open reservation"><i class="bi bi-chevron-right"></i></a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% include "dashboard/_pagination.html" %}
+  {% else %}
+    <div class="empty-state"><i class="bi bi-calendar"></i><p class="mb-0">No reservations match these filters.</p></div>
+  {% endif %}
+</div>
+{% endblock %}
